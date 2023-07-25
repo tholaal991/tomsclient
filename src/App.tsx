@@ -65,7 +65,7 @@ function App() {
     <>
       <ProLayout
         style={{
-          height: '100vh',
+          height: '100vh',display: 'flex'
         }}
         actionRef={actionRef}
         suppressSiderWhenMenuEmpty={toggle}

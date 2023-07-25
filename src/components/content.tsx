@@ -8,7 +8,9 @@ import { Practical } from "../Pages/Practical/Practical";
 import { Dashboard } from "../Pages/Dashboard/Dashboard";
 
 import { Shortlist } from "../Pages/annoucement/Iulaan";
-import { Ftdform } from "./Ftdform";
+import { DeviceDetect } from "./devicedetect";
+import { Ftdfrom } from "./Ftdform";
+import { Approval } from "./approvl";
 
 
 
@@ -25,8 +27,10 @@ return (
             <Route path="/passed" element={<Passed />} ></Route>
             <Route path="/practical" element={<Practical />} ></Route>
             <Route path="/shortlist" element={<Shortlist />} ></Route>
-            <Route path="/submitftdform" element={<Ftdform />} > </Route>
-             
+           
+             <Route path="/submitftd" element={<Ftdfrom/>}></Route>
+             <Route path="/device" element={<DeviceDetect/>}></Route>
+             <Route path="/approval" element={<Approval/>}></Route>
       </Routes>
    
 
