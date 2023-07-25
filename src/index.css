@@ -11,3 +11,38 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+<<<<<<< Updated upstream
+=======
+
+
+ftdcard {
+
+display: flex;
+width: 315px;
+height: 310px;
+padding: 0px 12px;
+justify-content: center;
+align-items: flex-start;
+align-content: flex-start;
+gap: 15px 13px;
+flex-shrink: 0;
+flex-wrap: wrap;
+  
+}
+
+.approval_card{
+display: flex;
+width: 20vh;
+height: 170px;
+padding: 0px 12px;
+justify-content: center;
+align-items: center;
+align-content: center;
+gap: 11px 12px;
+flex-shrink: 0;
+flex-wrap: wrap;
+border-radius: 8px;
+background-color: 'blue';
+color: red;
+}
+>>>>>>> Stashed changes

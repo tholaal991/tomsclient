@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
 import 'antd/dist/reset.css';
 import './App.css';
 import AppMenu from './components/menu';
@@ -178,6 +179,91 @@ function App() {
     //       </Layout>
 
     // </Layout>
+=======
+import React from 'react';
+import logo from './logo.svg';
+import './App.css';
+import { FtdLayout } from './ftd/layout.ftd';
+import { HomeLayout } from './home/layout.home';
+import { ProCard } from '@ant-design/pro-components';
+
+
+
+
+function App() {
+  return (
+    <div style={{
+      height: '100vh'
+    }} >
+        
+
+        <ProCard title='Pending Approval' className='approval_card'>
+           
+
+        </ProCard>
+     
+
+        <div className='approval_card'>
+                <span> test </span>
+        </div>
+
+
+     
+
+        {/* <ProLayout
+        menuItemRender={(item, dom) => (
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            pre {dom}
+          </div>
+        )}
+        subMenuItemRender={(_, dom) => (   
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+          >
+            pre {dom}
+          </div>
+        )}
+        title="Remax"
+        logo="https://gw.alipayobjects.com/mdn/rms_b5fcc5/afts/img/A*1NHAQYduQiQAAAAAAAAAAABkARQnAQ"
+        menuHeaderRender={(logo, title) => (
+          <div
+            id="customize_menu_header"
+            style={{
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+            }}
+            onClick={() => {
+              window.open('https://remaxjs.org/');
+            }}
+          >
+            {logo}
+            {title}
+          </div>
+        )}
+        {...defaultProps}
+        location={{
+          pathname: '/welcome',
+        }}
+      >
+        <PageContainer content="欢迎使用">Hello World</PageContainer>
+      </ProLayout>
+ */}
+
+
+    </div>
+>>>>>>> Stashed changes
   );
 }
 
