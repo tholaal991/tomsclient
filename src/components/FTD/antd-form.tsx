@@ -31,18 +31,23 @@ const handleupdateFTDForm = async (updateFormInputx: UpdateFtdformInput) => {
 
   const navigate = useNavigate();
 
-  const handleSubmit =  (values: UpdateFtdformInput) => {
-    console.log('Form data:', values);
+  const handleSubmit =  () => {
+    console.log('handle submit called' );
   
+    
+
+
     const updateForm: UpdateFtdformInput = {
-      id: values.id,
-      forty_eight_hour_score: values.forty_eight_hour_score,
-      twenty_four_hour_score: values.twenty_four_hour_score,
-      taking_medicine_score: values.taking_medicine_score,
-      good_health_score: values.good_health_score,
+      id: form.getFieldValue('id'),
+      forty_eight_hour_score: form.getFieldValue('fortyeightinput'),
+      twenty_four_hour_score: form.getFieldValue('twentyfourinput'),
+      taking_medicine_score: form.getFieldValue('MedicineTaking'),
+      good_health_score: form.getFieldValue('goodHealth'),
       approval_status: 2,
     }
-    handleupdateFTDForm(updateForm) 
+
+    
+   // handleupdateFTDForm(updateForm) 
     console.log('update form data:', updateForm)
     console.log('handle submit called');
 
@@ -111,7 +116,7 @@ const handleupdateFTDForm = async (updateFormInputx: UpdateFtdformInput) => {
 
           <Form.Item>
           
-              <Button type="primary" block onClick={(e)=> e}>
+              <Button type="primary" block onClick={()=>handleSubmit}>
                 Submit
               </Button>
             

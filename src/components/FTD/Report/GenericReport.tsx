@@ -14,7 +14,7 @@ interface GenericReportProps<T> {
   ReportName?: string;
 }
 
-const GenericReport = <T extends Record<DataIndex, any>>({ data, rowKey, ReportName }: GenericReportProps<T>) => {
+export const GenericReport = <T extends Record<DataIndex, any>>({ data, rowKey, ReportName }: GenericReportProps<T>) => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState<DataIndex>('');
   const searchInput = useRef<InputRef>(null);
