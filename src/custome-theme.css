@@ -1,0 +1,10 @@
+/* custom-theme.css */
+/* Override Ant Design styles with light theme styles */
+body {
+    background-color: #f0f2f5; /* Set a light background color */
+  }
+  
+  .ant-menu-dark .ant-menu-inline.ant-menu-sub {
+    background: #f0f2f5; /* Set a light background color for the submenu */
+  }
+  
