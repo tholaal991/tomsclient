@@ -1,8 +1,6 @@
-<<<<<<< Updated upstream
+
 import 'antd/dist/reset.css';
 import './App.css';
-import AppMenu from './components/menu';
-import Contents from './components/content';
 import {useNavigate} from 'react-router-dom'
 import { Headers } from './components/Header';
 import { Footer } from './components/Footer';
@@ -11,11 +9,14 @@ import { Layout } from 'antd';
 
 import { PageContainer, ProLayout } from '@ant-design/pro-components';
 import { Button, Switch } from 'antd';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import customMenuDate from './customMenu';
 import { icons } from 'antd/es/image/PreviewGroup';
 import { CheckMarkSVG } from './SVG/CheckMark.SVG';
 import { MtccSVG } from './SVG/MtccSVG';
+import Contents from './content';
+import { CarFilled, CiCircleFilled } from '@ant-design/icons';
+import { OperatorWindow } from './components/FTD/Operator/OperatorWindow';
 
 
 
@@ -33,7 +34,7 @@ let serviceData: any[] = customMenuDate;
 
 const { Content, Header} = Layout;
 
-function App() {
+export default function App() {
 
   // const navigate = useNavigate()
 
@@ -52,7 +53,7 @@ function App() {
   const [toggle, setToggle] = useState(false);
 
 
-
+  const [menuData, setMenuData] = useState([])
 
 
 
@@ -64,13 +65,48 @@ function App() {
   
 
     <>
-      <ProLayout
+      <ProLayout 
         style={{
           height: '100vh',display: 'flex'
         }}
+        menuDataRender={() => [{
+          path: '/operator',
+          name: 'Fit to Drive',
+          icon: <CarFilled/>,
+          component: '../components/FTD/Operator/OperatorWindow',
+          children: [
+            {
+              path: '/operator',
+              name: 'Operator',
+              icon: <CarFilled/>,
+              component: '../components/FTD/Operator/OperatorWindow',
+            },
+            {
+               path: '/inchargeftd',
+  
+               name: 'Submit Ftd',
+               icon: <CarFilled/>,
+               component: '../components/FTD/Incharge-Ftdform-mobile',
+            },  
+            {
+              path: '/approval',
+              name: 'FTD Approval Page',
+              icon: <CarFilled/>,
+              component: '../components/FTD/Incharge-Ftdform-mobile',
+           }, 
+           {
+            path: '/ftdreport',
+            name: 'FTD Report',
+            icon: <CarFilled/>,
+            component: '../components/FTD/Report/TestGenericReport',
+
+         }, 
+
+          ]
+        }]}
         actionRef={actionRef}
         suppressSiderWhenMenuEmpty={toggle}
-        title='T.O.M.S'
+        title='Fit to Drive'
         logo={<MtccSVG/>}
         menu={
           {
@@ -79,48 +115,88 @@ function App() {
             return serviceData;
           },
         }}
-        location={{
-          pathname: '/welcome/welcome',
-        }}
+        menuItemRender={(item, dom) => {
+          return (
+            <a
+              onClick={() => {
+                if (item.path) {
+                  window.location.href = item.path;
+                }
+              }}
+            >
+              {dom}
+            </a>
+          );
+        }
+        }
+        location={
+          {
+          pathname: '/o',
+        }
+        }
+        rightContentRender={() => (
+          <div
+            // style={{
+            //   marginRight: '1rem',
+            // }}
+          >
+            {/* <Switch
+              checked={toggle}
+              onChange={() => {
+                setToggle(!toggle);
+              }}
+            /> */}
+          </div>
+        )}
       >
+        <PageContainer
+          // content="FTD Module"
+          // extra={[
+          //   <Button key="3">操作</Button>,
+          //   <Button key="2">操作</Button>,
+          //   <Button key="1" type="primary">
+          //     主操作
+          //   </Button>,
+          // ]}
+          // footer={[
+          //   <Button key="3">重置</Button>,
+          //   <Button key="2" type="primary">
+          //     提交
+          //   </Button>,
+          // ]}
+          // tabList={[
 
+          //   {
+          //     tab: '基本信息',
+          //     key: 'base',
+          //   },
+          //   {
+          //     tab: '详细信息',
+          //     key: 'info',
+          //   },
+          // ]}
+          // tabProps={{
+          //   onChange: (key) => {
+          //     console.log(key);
+          //   },
+          // }}
+        >
+         
+       
+        </PageContainer>
+        
 
-
-             <Contents/>
+           <Contents/>
         
        
 
-          {/* <div>
-            Hide Sider when menu fetched from server is empty Sider：
-            <Switch checked={toggle} onChange={setToggle} />
-          </div>
-          Hello World
-          <Button
-            style={{
-              margin: 8,
-            }}
-            onClick={() => {
-              serviceData = customMenuDate;
-              actionRef.current?.reload();
-            }}
-          >
-            Refresh menu
-          </Button>
-          <Button
-            style={{
-              margin: 8,
-            }}
-            onClick={() => {
-              serviceData = [];
-              actionRef.current?.reload();
-            }}
-          >
-            Refresh menu (empty  data)
-          </Button> */}
+         
        
       </ProLayout>
     </>
-   
+  )
+
+        }
 
 
 
@@ -179,92 +255,4 @@ function App() {
     //       </Layout>
 
     // </Layout>
-=======
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import { FtdLayout } from './ftd/layout.ftd';
-import { HomeLayout } from './home/layout.home';
-import { ProCard } from '@ant-design/pro-components';
-
-
-
-
-function App() {
-  return (
-    <div style={{
-      height: '100vh'
-    }} >
         
-
-        <ProCard title='Pending Approval' className='approval_card'>
-           
-
-        </ProCard>
-     
-
-        <div className='approval_card'>
-                <span> test </span>
-        </div>
-
-
-     
-
-        {/* <ProLayout
-        menuItemRender={(item, dom) => (
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-            }}
-          >
-            pre {dom}
-          </div>
-        )}
-        subMenuItemRender={(_, dom) => (   
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-            }}
-          >
-            pre {dom}
-          </div>
-        )}
-        title="Remax"
-        logo="https://gw.alipayobjects.com/mdn/rms_b5fcc5/afts/img/A*1NHAQYduQiQAAAAAAAAAAABkARQnAQ"
-        menuHeaderRender={(logo, title) => (
-          <div
-            id="customize_menu_header"
-            style={{
-              height: '32px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-            }}
-            onClick={() => {
-              window.open('https://remaxjs.org/');
-            }}
-          >
-            {logo}
-            {title}
-          </div>
-        )}
-        {...defaultProps}
-        location={{
-          pathname: '/welcome',
-        }}
-      >
-        <PageContainer content="欢迎使用">Hello World</PageContainer>
-      </ProLayout>
- */}
-
-
-    </div>
->>>>>>> Stashed changes
-  );
-}
-
-export default App;

@@ -17,16 +17,22 @@ import {
     ProHelpSelect,
     StatisticCard,
     StepsForm,
+    
   } from '@ant-design/pro-components';
+
+  import { Card, Input, Button as MobileButton, NumberKeyboard, Radio, } from 'antd-mobile'
 
   import { CheckMarkSVG } from '../SVG/CheckMark.SVG';
 
-  import { Button, Statistic, message } from 'antd';
+  import { Button, InputNumber, Statistic, message, Typography } from 'antd';
   import React, { useState } from 'react';
 import { PassedCard } from './passedCard';
- import { Typography} from 'antd'
+  
 import { wrap } from 'module';
 import { Result } from 'antd-mobile';
+import { MobileOnlyView } from 'react-device-detect';
+import TypedInputNumber from 'antd/es/input-number';
+import { useNavigate } from 'react-router';
 
   
  const {Paragraph} = Typography;
@@ -42,20 +48,20 @@ import { Result } from 'antd-mobile';
 
 export const FtdMobile = () => {
   const [loading, setLoading] = useState(false);
+  const [form] = ProForm.useForm();
 
 
-
-
-
-
+   const navigate = useNavigate()
     return (  
-      <PageContainer title='Submit FTD Form' > 
+      <Card title='Submit FTD Form' style={{}}> 
       
-      <ProCard >
+      <Card >
       <Paragraph> How many hour have you slept in the last 48 hours? test one two three</Paragraph>  
         <StepsForm
-          containerStyle={{ marginLeft: '-11vh',justifyContent: 'center',alignContent: 'center',flexWrap: 'wrap', display: 'flex', flexDirection: 'column'}}
-          onFinish={async () => {
+          
+          containerStyle={{ justifyContent: 'center',alignContent: 'center',flexWrap: 'wrap', display: 'flex', flexDirection: 'column'}}
+          onFinish={async (values) => {
+            console.log('entered values of the form are : ',values);
             setLoading(true);
             await waitTime(1000);
             message.success('Suceesfully Form Submitted.');
@@ -63,38 +69,46 @@ export const FtdMobile = () => {
           } }
           submitter={{
             render: ({ form, onSubmit, step, onPre }) => {
-              return [ (step < 2 && 
-                <Button
+              return [ (step < 1 && 
+                <MobileButton
+                 
+                block  style={{minWidth: '100px'}}
+                  size='large'
                   key="rest"
                   onClick={() => {
                     form?.resetFields();
                   } }
                 >
                   Reset
-                </Button>),
-                step > 0 && (   
-                  <Button
+                </MobileButton>),
+                step > 0  && (   
+                  <MobileButton
+                  block  style={{minWidth: '100px'}}
+                  size='large'
                     key="pre"
                     onClick={() => {
                       onPre?.();
                     } }
                   >
                     Previous
-                  </Button>
+                  </MobileButton>
                 ), step < 2 && (
-                <Button
+                <MobileButton
+                block  style={{minWidth: '100px'}}
+                size='large'
                   key="next"
                   loading={loading}
-                  type="primary"
+                  color='primary'
                   onClick={() => {
                     onSubmit?.();
+                  
                   } }
                 >
                   Next
-                </Button>),( step >= 2 &&
-                <Button type='primary'>
+                </MobileButton>),( step >= 2 &&
+                <MobileButton color='primary' key='OK' size='large' block  style={{minWidth: '100px'}} onClick={()=> navigate("/operator")}>
                   OK
-                </Button>)
+                </MobileButton>)
              
                 
               ];
@@ -119,7 +133,17 @@ export const FtdMobile = () => {
               return true;
             } }
           >
+           
+   
+
+         
+
+            
+
             <ProFormRadio.Group
+            key='goodHealth'
+              extra
+              radioType='button'
               name="goodHealth"
               label="Are you in good Health Right now?"
               rules={[
@@ -127,8 +151,12 @@ export const FtdMobile = () => {
                   required: true,
                 },
               ]}
-              options={['Yes', 'No']} />
+              options={['Yes', 'No']} 
+              />
             <ProFormRadio.Group
+             key={'MedicineTaking'}
+              extra
+              radioType='button'
               name="MedicineTaking"
               label="Are you taking any medicine?"
               rules={[
@@ -147,6 +175,8 @@ export const FtdMobile = () => {
                 return (
                   
                   MedicineTaking == 'Yes' && (  <><ProFormRadio.Group
+                  key={'MedicineTaking'}
+                    radioType='button'
                    name="MedicineWillEffect"
                    label="Will it effect your driving?"
                    rules={[
@@ -156,10 +186,10 @@ export const FtdMobile = () => {
                    ]}
                    options={['Yes', 'No']} />
 
-                <ProFormDependency name={['MedicineWillEffect']}>
+                <ProFormDependency name={['MedicineWillEffect']} >
                {({ MedicineWillEffect }) => {
                 return (
-                    MedicineWillEffect == 'Yes' &&  <ProFormText name="medicineName" label="Medicine Name" width='sm' placeholder='Medicine  name'  rules={[
+                    MedicineWillEffect == 'Yes' &&  <ProFormText name="medicineName"  label="Medicine Name" width='sm' placeholder='Medicine  name'  rules={[
                       {
                         required: true,
                       },
@@ -179,26 +209,19 @@ export const FtdMobile = () => {
          
           <StepsForm.StepForm name="checkbox" title="Sleep Info" style={{display: 'flex', flexDirection: 'column'}}>
            
-           <ProFormDigit name='twentyfour' label='Hours I have you slept in 24 hours?' width='sm' placeholder={'24 hours'}/>
-           <ProFormDigit name='fourtyeight' label='Hours I have you slept in 48 hours?' width='sm' placeholder={'48 hours'}/>
-                
+          
+            
+           <ProForm.Item label='Hours  I  have slept in the 24 hours?' >
+             <InputNumber name='twentyfourinput' size='large' inputMode='numeric' min={0} max={24} title='input 24 hour sleep' placeholder={'24 hours'} required/>
+              
+           </ProForm.Item>
 
+           
+           <ProForm.Item  label='Hours I have slept in the 48 hours?' >
+             <InputNumber name='twentyfourinput'  size='large' inputMode='numeric' min={0} max={48} title='input 48 hour sleep' placeholder={'48 hours'} required/>
+           </ProForm.Item>
+          
         
-
-          { /* <ProFormDigit name="twentyfourhoursleep"  label="How many hour have you slept in the last 24 hours?" placeholder="24 hour sleep"  rules={[
-                     {
-                       required: true,
-                     },
-                   ]}/> */}
-
-               
-
-          {/* <ProFormDigit name="fourtyeighthoursleep" label="How many hour have you slept in the last 48 hours testing one tw hree?"   placeholder="48 hour sleep"  rules={[
-                     {
-                       required: true,
-                     },
-                   ]}/> */}
-
            
           </StepsForm.StepForm>
 
@@ -208,14 +231,14 @@ export const FtdMobile = () => {
 
           <StepsForm.StepForm name="time" title="Score">
             
-            <div style={{display: 'flex', marginBottom: '20px' , flexDirection: 'column', flexWrap: 'wrap'}}>
+            {/* <div style={{display: 'flex', marginBottom: '20px' , flexDirection: 'column', flexWrap: 'wrap'}}> */}
               
                
               
               <Result title='Passed. Start your duty!' status='success' />
               <Result title='Peding Approval'  status='waiting' />  
             
-            </div>
+            {/* </div> */}
            
           
         
@@ -228,9 +251,9 @@ export const FtdMobile = () => {
 
   
 
-      </ProCard>
+      </Card>
       
-      </PageContainer>
+      </Card>
                 
        
     )

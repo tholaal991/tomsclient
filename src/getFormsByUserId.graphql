@@ -1,0 +1,58 @@
+query FormsByUserId($userId: Int!) {
+  formsByUserId(userId: $userId) {
+    id
+    approveId
+    approval_status
+    shiftId
+    inchargeId
+  }
+}
+query GetAllUsers {
+  getAllUsers {
+    name
+    rcn
+  }
+}
+
+query FormsByInchargeId($inchargeId: Int!) {
+  formsByInchargeId(inchargeId: $inchargeId) {
+    id
+    operatorId
+    shiftId
+    approval_status
+  }
+}
+
+mutation UpdateApprovalStatus($formId: Int!, $approvalStatus: Int!) {
+  updateApprovalStatus(formId: $formId, approvalStatus: $approvalStatus) {
+    id
+    approval_status
+  }
+}
+
+query GetFtdformWithOperator($formId: Int!) {
+  form(id: $formId) {
+    id
+    operator {
+      rcn
+      name
+    }
+  }
+}
+
+mutation UpdateFtdform($updateFtdformInput: UpdateFtdformInput!) {
+  updateFtdform(updateFtdformInput: $updateFtdformInput) {
+    id
+    operatorId
+    shiftId
+    inchargeId
+    approval_status
+    good_health_score
+    taking_medicine_score
+    twenty_four_hour_score
+    forty_eight_hour_score
+    operator {
+      rcn
+    }
+  }
+}

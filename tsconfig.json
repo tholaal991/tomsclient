@@ -18,13 +18,9 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "preserve"
   },
   "include": [
     "src"
-<<<<<<< Updated upstream
-, "src/Pages/CheckInOut/.tsx"  ]
-=======
   ]
->>>>>>> Stashed changes
 }

@@ -9,12 +9,12 @@ export const Ftdfrom = ()=>{
 
     return(
         <>
-                <BrowserView>
-                     <FTDBrowserForm/>
-                </BrowserView>
-                <MobileView>
+                {/* <BrowserView> */}
+                     {/* <FTDBrowserForm/> */}
+                {/* </BrowserView> */}
+                {/* <MobileView> */}
                      <FtdMobile/>
-                </MobileView>
+                {/* </MobileView> */}
         </>
     )
 }
