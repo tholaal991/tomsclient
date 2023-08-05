@@ -56,3 +56,26 @@ mutation UpdateFtdform($updateFtdformInput: UpdateFtdformInput!) {
     }
   }
 }
+
+query GetAllForms {
+  getAllForms {
+    id
+    shiftId
+    approval_status
+    operatorId
+    riskLevel
+    createdAt
+    appliedOn
+    operator {
+      rcn
+      name
+    }
+  }
+}
+
+query Shiftplans {
+  shiftplans {
+    id
+    valid
+  }
+}

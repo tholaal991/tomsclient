@@ -103,7 +103,7 @@ const mappedForms = forms?.map( (form,key) => ({
 }))
 
  const unattendedForms = mappedForms?.filter( (form) => form.approvalStatus === 1) || []
- const pendingForms = mappedForms?.filter( (form) => form.approvalStatus === 1) || []
+ const pendingForms = mappedForms?.filter( (form) => form.approvalStatus === 2) || []
   const approvedForms = mappedForms?.filter( (form) => form.approvalStatus === 4) || []
   const rejectedForms = mappedForms?.filter( (form) => form.approvalStatus === 3) || []
   const cancelledForms = mappedForms?.filter( (form) => form.approvalStatus === 5) || []
@@ -191,7 +191,7 @@ const mappedForms = forms?.map( (form,key) => ({
       }}
     >
         
-        <CapsuleTabs>
+        <CapsuleTabs >
           <CapsuleTabs.Tab title='Pending' key='1'>
             <List>
               {pendingftdItems.map(item => (

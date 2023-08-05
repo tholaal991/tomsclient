@@ -42,7 +42,7 @@ const data: DataType[] = [
   },
 ];
 
-const FTDReport: React.FC = () => {
+export const FTDReport: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState('');
   const searchInput = useRef<InputRef>(null);
@@ -258,4 +258,4 @@ const FTDReport: React.FC = () => {
   );
 };
 
-export default FTDReport;
+

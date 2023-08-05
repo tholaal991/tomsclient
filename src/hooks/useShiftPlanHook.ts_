@@ -1,0 +1,123 @@
+import {useState, useEffect} from 'react';
+
+
+import {ShiftplansDocument, ShiftplansQuery, ShiftplansQueryVariables}  from '../generated/graphql';
+import { useQuery } from '@apollo/client';
+
+
+export const useShiftPlanHook = (props) => {
+    
+    const [validShiftPlanlist, setValidShift] = useState(null);
+    const [invalidShiftPlanlist, setInvalidShift] = useState(null);
+    
+
+    const {
+        data: data,
+        loading: loading,
+        error: error,
+        refetch: refetch
+    } = useQuery<ShiftplansQuery, ShiftplansQueryVariables>(ShiftplansDocument, {
+        variables: {},
+        });
+    
+
+    useEffect( ()=> {
+        refetch()
+    },[refetch])
+
+
+
+    // if (!loading && !error) {
+
+    //    const validshiftplanlist =  data?.shiftplans.filter( (shiftplan) => shiftplan.valid === true)
+    //    const invalidshiftplanlist = data?.shiftplans.filter( (shiftplan) => shiftplan.valid === false)
+
+    //    if (validshiftplanlist) {
+    //        setValidShift(validshiftplanlist?.map( () => ({
+            
+    //    }
+    // }
+
+
+
+
+
+
+
+
+
+
+   return null
+}
+
+//     const [error, setError] = useState(null);
+
+//     const {
+//         data: data,
+//         loading: loading,
+//         error: error,
+//         refetch: refetch} = useQuery<GetAllShiftPlansQuery, GetAllShiftPlansQueryVariables>(GetAllShiftPlansDocument, {
+//         variables: {},
+//         });
+
+
+    
+    
+// useQuery<GetAllShiftPlansQuery, GetAllShiftPlansQueryVariables>(GetAllShiftPlansDocument, {
+
+
+// //     const {
+// //         data: formsData,
+// //         loading: formsLoading,
+// //         error: formsError,
+// //         refetch: refetchForms,
+// //       } = useQuery<FormsByUserIdQuery, FormsByUserIdQueryVariables>(FormsByUserIdDocument, {
+// //         variables: { userId },
+// //       });
+
+// //       const {
+// //         data: usersData,
+// //         loading: usersLoading,
+// //         refetch: refetchUsers,
+// //         error: usersError,
+// //       } = useQuery<GetAllUsersQuery, GetAllUsersQueryVariables>(GetAllUsersDocument, {
+// //         variables: {},
+// //       });
+
+    
+
+
+// //   useEffect(() => {
+// //     refetchUsers()
+// //     refetchForms({ userId });
+// //   }, [userId, refetchForms, refetchUsers]);
+
+// //   if (formsLoading) {
+// //   }
+
+// //   if (formsError) {
+// //   }
+
+// //   const users =  usersData?.getAllUsers;
+// //   const forms = formsData?.formsByUserId;
+
+
+// //   const mappedUsers = users?.map( (user,key) => ({
+// //     rcn: user.rcn,
+// //     name: user.name,
+// //   }))
+
+// //   const mappedForms = forms?.map((form,key) => ({
+// //     id: form.id,
+// //     approveId: form.approveId,
+// //     approval_status: form.approval_status,
+// //     shiftId: form.shiftId,
+// //     inchargeId: form.inchargeId,
+// //   }));
+
+
+
+
+
+// return null
+    // return {data, loading , error};

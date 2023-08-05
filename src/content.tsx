@@ -15,10 +15,11 @@ import { PassedPage } from "./components/PassedPage";
 import { OperatorWindow } from "./components/FTD/Operator/OperatorWindow";
 import { InchargeFtdFormMobile } from "./components/FTD/Incharge-Ftdform-mobile";
 import { AntdFTDForm } from "./components/FTD/antd-form";
-import FtdReportTable from "./components/FTD/Report/FtdReportTable";
 import TESTGENERIC from "./components/FTD/Report/TestGenericReport";
 import { FtdMobile } from "./components/Ftdform-mobile";
+import AddIcharge from "./components/FTD/AddIncharge";
 import React from "react";
+// import AddIncharge from "./components/FTD/AddIncharge";
 
 
 
@@ -40,16 +41,15 @@ return (
              <Route path="/device" element={<DeviceDetect/>}></Route>
              <Route path="/approval" element={<Approval/>}></Route>
              <Route path="/pro" element={<AntdFTDForm/>}></Route>
-
-             <Route path="/ftdreport" element={<FtdReportTable/>}></Route>
+             
+             <Route path="/ftdreport" element={<TESTGENERIC/>}></Route>
              
              <Route path="/123" element={<PassedPage/>}></Route>
              <Route path='/operator' element={<OperatorWindow/>}></Route>
              <Route path='/testgeneric' element={<TESTGENERIC/>}></Route>
              <Route path='/inchargeftd' element={<InchargeFtdFormMobile/>}></Route>
-
-
-      </Routes>
+             <Route path="/addincharge" element={<AddIcharge/>}></Route>
+         </Routes>
    
 
 

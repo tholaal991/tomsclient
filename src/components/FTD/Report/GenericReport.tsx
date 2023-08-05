@@ -9,12 +9,13 @@ import ExcelJS, { Column, Worksheet, Workbook, Row } from 'exceljs';
 type DataIndex = string;
 
 interface GenericReportProps<T> {
-  data: T[];
+  data: T[] ;
   rowKey: DataIndex;
   ReportName?: string;
+  hideExportButton?: boolean;
 }
 
-export const GenericReport = <T extends Record<DataIndex, any>>({ data, rowKey, ReportName }: GenericReportProps<T>) => {
+export const GenericReport = <T extends Record<DataIndex, any>>({ data, rowKey, ReportName,hideExportButton }: GenericReportProps<T>) => {
   const [searchText, setSearchText] = useState('');
   const [searchedColumn, setSearchedColumn] = useState<DataIndex>('');
   const searchInput = useRef<InputRef>(null);
@@ -144,11 +145,11 @@ export const GenericReport = <T extends Record<DataIndex, any>>({ data, rowKey, 
 
   return (
     <>
-      <Typography.Title level={3}>{ReportName}</Typography.Title>
+      
 
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
         <div></div>
-        <Button icon={<DownloadOutlined />} size="large" onClick={exportToExcel}>
+        <Button icon={<DownloadOutlined />} size="large" onClick={exportToExcel}  hidden={hideExportButton}>
           Export to Excel
         </Button>
       </div>

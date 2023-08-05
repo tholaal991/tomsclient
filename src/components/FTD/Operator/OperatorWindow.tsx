@@ -126,8 +126,6 @@ export const OperatorWindow: React.FC = () => {
       <Card>
 
 
-      
-
       <CapsuleTabs>
         <CapsuleTabs.Tab title='Action' key={'Action'} >
         <Typography.Title level={4} style={{ padding: '20px' }}> Action Page </Typography.Title>
@@ -177,7 +175,7 @@ export const OperatorWindow: React.FC = () => {
           formid={Number(form.id)}
           shiftid={Number(form.shiftId)}
             />
-        ))}
+        ))}  
         {/* <OperatorCard title={'My Action'} name={'Ahmed Mohamed'} score={"very high"} statu={"pending"} /> */}
         {/* <OperatorCard title={'Pending Approval'} name={'Ahmed Mohamed'} score={"very high"} statu={"pending"} /> */}
         {/* <OperatorCard title={'Latest Approval'} name={'Ahmed Mohamed'} score={"very high"} statu={"pending"} /> */}

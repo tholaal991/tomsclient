@@ -75,6 +75,7 @@ export default function App() {
           name: 'Fit to Drive',
           icon: <CarFilled/>,
           component: '../components/FTD/Operator/OperatorWindow',
+          hideChildrenInMenu: false,
           children: [
             {
               path: '/operator',
@@ -101,7 +102,15 @@ export default function App() {
             icon: <CarFilled/>,
             component: '../components/FTD/Report/TestGenericReport',
 
-         }, 
+         },    {
+          path: '/addincharge',
+          name: 'Manage Shift Incharge',
+          icon: <CarFilled/>,
+          component: '../componets/FTD/Report/AddIncharge',
+
+       }, 
+         
+
 
           ]
         }]}

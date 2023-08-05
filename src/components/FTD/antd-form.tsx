@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, Typography, message, InputNumber, Radio,Form, Button, Input, Checkbox } from 'antd';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {  Divider, Space, Tag, Toast,  } from 'antd-mobile';
@@ -19,10 +19,18 @@ export const AntdFTDForm = () => {
   const [step, setStep] = useState(0);
   const [form] = Form.useForm();
 const [medicineTaking, setMedicineTaking] = useState(false);
+const [disableSubmit, setDisableSubmit] = useState(true);
 
 const [updateFtdForm, {error}] = useMutation<UpdateFtdformMutation, UpdateFtdformMutationVariables>(UpdateFtdformDocument)
 
+useEffect( () => {setDisableSubmit(true)}
+, [form.getFieldValue('submitButton')])
 
+
+
+if (error) {
+  Toast.show(error.message)
+}
 
 const handleupdateFTDForm = async (updateFormInputx: UpdateFtdformInput) => {
     console.debug('handleUPDateformcalled')
@@ -38,16 +46,16 @@ const handleupdateFTDForm = async (updateFormInputx: UpdateFtdformInput) => {
 
 
     const updateForm: UpdateFtdformInput = {
-      id: form.getFieldValue('id'),
+      id: operator_formid,
       forty_eight_hour_score: form.getFieldValue('fortyeightinput'),
       twenty_four_hour_score: form.getFieldValue('twentyfourinput'),
-      taking_medicine_score: form.getFieldValue('MedicineTaking'),
-      good_health_score: form.getFieldValue('goodHealth'),
+      taking_medicine_score: form.getFieldValue('MedicineTaking') === 'Yes' ? 1 : 0,
+      good_health_score: form.getFieldValue('goodHealth') === 'Yes' ? 1 : 0,
       approval_status: 2,
     }
 
     
-   // handleupdateFTDForm(updateForm) 
+   handleupdateFTDForm(updateForm) 
     console.log('update form data:', updateForm)
     console.log('handle submit called');
 
@@ -73,7 +81,10 @@ const handleupdateFTDForm = async (updateFormInputx: UpdateFtdformInput) => {
  const {operator_formid, operator_shiftid, operator_rcn} = state
   return (
       <Card>
-        <Form onFinish={handleSubmit} form={form}>
+        <Form onFinish={handleSubmit} form={form}
+        onSubmitCapture={(e) => {console.log('submit captured', e)}
+        }
+        >
           
           <Space>
             <Tag>Form ID: { operator_formid } </Tag>
@@ -107,8 +118,10 @@ const handleupdateFTDForm = async (updateFormInputx: UpdateFtdformInput) => {
 
 
 
-              <Form.Item  rules={[{required: true}]} required>
-                <Checkbox >
+              <Form.Item  rules={[{required: true}]} >
+                <Checkbox onChange={(e) => e.target.checked === true ? setDisableSubmit(false): setDisableSubmit(true)} onClick={()=> {
+                    
+                }} >
                 I have read and understood the above questions, and I certify that my answers are true and complete to the best of my knowledge.
                 </Checkbox>
               </Form.Item>
@@ -116,7 +129,7 @@ const handleupdateFTDForm = async (updateFormInputx: UpdateFtdformInput) => {
 
           <Form.Item>
           
-              <Button type="primary" block onClick={()=>handleSubmit}>
+              <Button type="primary" block onClick={handleSubmit} name='submitButton' disabled={disableSubmit}>
                 Submit
               </Button>
             
