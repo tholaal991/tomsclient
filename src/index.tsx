@@ -8,9 +8,10 @@ import { Provider } from 'react-redux';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { store } from './Redux/store';
 import App from './App';
-
+import en_US from 'antd/lib/locale/en_US';
 
 import reportWebVitals from './reportWebVitals';
+import { ConfigProvider } from 'antd-mobile';
 
 const client = new ApolloClient({
   uri: 'http://localhost:4000/graphql', 
@@ -25,6 +26,7 @@ ReactDOM.render(
       <Provider store={store}>
         <BrowserRouter>
           <App />
+          
         </BrowserRouter>
       </Provider>
     </ApolloProvider>

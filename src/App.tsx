@@ -4,7 +4,7 @@ import './App.css';
 import {useNavigate} from 'react-router-dom'
 import { Headers } from './components/Header';
 import { Footer } from './components/Footer';
-import { Layout } from 'antd';
+import { Layout, message } from 'antd';
 
 
 import { PageContainer, ProLayout } from '@ant-design/pro-components';
@@ -18,7 +18,13 @@ import Contents from './content';
 import { CarFilled, CiCircleFilled } from '@ant-design/icons';
 import { OperatorWindow } from './components/FTD/Operator/OperatorWindow';
 import React from 'react';
-
+import jwtDecode from 'jwt-decode';
+import Login from './Pages/Login/Login';
+import qs from 'qs';
+import { useLazyQuery } from '@apollo/client';
+import { apolloClient } from './API/Client';
+import { ME_QUERY } from './MeQuery';
+import UserContext from "./Context/UserContext";
 
 
 const waitTime = (time: number = 100) => {
@@ -37,35 +43,157 @@ const { Content, Header} = Layout;
 
 export default function App() {
 
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
 
-  // const onClick = (e:any) => {
-  //   if( e.key != undefined){
-  //     navigate(e.key)
-  //   }
-  //   console.log('click loged from parent',  e.key)
-  // }
- 
-
-
-  const actionRef = useRef<{
-    reload: () => void;
-  }>();
-  const [toggle, setToggle] = useState(false);
+  const onClick = (e:any) => {
+    if( e.key != undefined){
+      navigate(e.key)
+    }
+    console.log('click loged from parent',  e.key)
+  }
 
 
+  const [appLoading, setAppLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loggedOut, setLoggedOut] = useState(false);
+const [toggle, setToggle] = useState(false);
   const [menuData, setMenuData] = useState([])
 
 
+  const redirect = () => {
+    window.location.href = `https://id.mtcc.com.mv/?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
+  };
+
+  const logoutRedirect = () => {
+    window.location.href = `https://id.mtcc.com.mv/logout/?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
+  };
+
+
+const setPrevRoute = () => {
+    const currentPath = window.location.pathname;
+    const token = localStorage.getItem("toms_token");
+    if (currentPath !== "/" && !token)
+      localStorage.setItem("prevRoute", currentPath);
+  };
+
+
+
+const [me] = useLazyQuery(ME_QUERY, {
+    client: apolloClient,
+    onCompleted: (data) => {
+      // const roles: string[] = data.me.roles;
+      setUser({
+        ...data.me,
+       
+      });
+      setAppLoading(false);
+      setLoggedOut(false);
+    },
+    onError: (error) => {
+      localStorage.removeItem("toms_token");
+      setLoggedOut(true);
+      setAppLoading(false);
+
+      if (error.message === "Unauthorized") {
+        message.error("Not authorized to access this app.");
+      } else {
+        message.error("An error occurred while logging in.");
+      }
+    },
+  });
 
 
 
 
+
+
+interface SSOToken {
+    id: number;
+    type: string;
+    iat: number;
+    exp: number;
+  }
+
+
+useEffect(() => {
+    const setLogOutStates = () => {
+      setPrevRoute();
+      setLoggedOut(true);
+      setAppLoading(false);
+    };
+    if (user === null) {
+      const token = localStorage.getItem("toms_token");
+      if (token) {
+        const decoded = jwtDecode<SSOToken>(token);
+        if (decoded.id) {
+          me();
+        } else {
+          setLogOutStates();
+        }
+      } else {
+        if (window.location) {
+          const tkn = qs.parse(window.location.search, {
+            ignoreQueryPrefix: true,
+          }).token as string;
+          if (tkn) {
+            localStorage.setItem("toms_token", `${tkn}`);
+            const decoded = jwtDecode<SSOToken>(tkn);
+            if (decoded.id) {
+              console.log('I was called!')
+              me();
+            } else {
+              setLogOutStates();
+            }
+          } else {
+            setLogOutStates();
+          }
+        }
+      }
+    }
+  }, [user, me]);
+
+  const logout = () => { 
+    localStorage.removeItem("toms_token");
+    localStorage.setItem("logOutClicked", "true");
+    logoutRedirect();
+  };
+
+  if (appLoading) {
+    return (
+      <div style={{ padding: "40px" }}>
+        <h3>Loading...</h3>
+      </div>
+    );
+  }
+
+  if (!appLoading && loggedOut) {
+    if (localStorage.getItem("logOutClicked") === "true") {
+      return <Login login={redirect} />;
+    } redirect();
+  }
+  
+
+
+
+
+
+
+
+  
+
+
+
+
+  // const actionRef = useRef<{
+  //   reload: () => void;
+  // }>();
+  
   return (
 
   
 
-    <>
+    
+
       <ProLayout 
         style={{
           height: '100vh',display: 'flex'
@@ -114,7 +242,7 @@ export default function App() {
 
           ]
         }]}
-        actionRef={actionRef}
+        // actionRef={actionRef}
         suppressSiderWhenMenuEmpty={toggle}
         title='Fit to Drive'
         logo={<MtccSVG/>}
@@ -159,41 +287,47 @@ export default function App() {
           </div>
         )}
       >
-        <PageContainer
-          // content="FTD Module"
-          // extra={[
-          //   <Button key="3">操作</Button>,
-          //   <Button key="2">操作</Button>,
-          //   <Button key="1" type="primary">
-          //     主操作
-          //   </Button>,
-          // ]}
-          // footer={[
-          //   <Button key="3">重置</Button>,
-          //   <Button key="2" type="primary">
-          //     提交
-          //   </Button>,
-          // ]}
-          // tabList={[
+        {/* <PageContainer
+          content="FTD Module"
+          extra={[
+            <Button key="3">操作</Button>,
+            <Button key="2">操作</Button>,
+            <Button key="1" type="primary">
+              主操作
+            </Button>,
+          ]}
+          footer={[
+            <Button key="3">重置</Button>,
+            <Button key="2" type="primary">
+              提交
+            </Button>,
+          ]}
+          tabList={[
 
-          //   {
-          //     tab: '基本信息',
-          //     key: 'base',
-          //   },
-          //   {
-          //     tab: '详细信息',
-          //     key: 'info',
-          //   },
-          // ]}
-          // tabProps={{
-          //   onChange: (key) => {
-          //     console.log(key);
-          //   },
-          // }}
-        >
+            {
+              tab: '基本信息',
+              key: 'base',
+            },
+            {
+              tab: '详细信息',
+              key: 'info',
+            },
+          ]}
+          tabProps={{
+            onChange: (key) => {
+              console.log(key);
+            },
+          }}
+        > */}
          
+    {/* <Button onClick={redirect}>
+         Click to Login
+    </Button>
        
-        </PageContainer>
+       <Button onClick={logoutRedirect}>
+          Click to Logout
+        </Button>
+        </PageContainer> */}
         
 
            <Contents/>
@@ -203,10 +337,7 @@ export default function App() {
          
        
       </ProLayout>
-    </>
-  )
-
-        }
+ 
 
 
 
@@ -216,7 +347,7 @@ export default function App() {
 
 
 
-
+  );
 
 
 
@@ -265,4 +396,4 @@ export default function App() {
     //       </Layout>
 
     // </Layout>
-        
+      }
