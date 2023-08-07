@@ -21,8 +21,8 @@ import React from 'react';
 import jwtDecode from 'jwt-decode';
 import Login from './Pages/Login/Login';
 import qs from 'qs';
-import { useLazyQuery } from '@apollo/client';
-import { apolloClient } from './API/Client';
+import { ApolloProvider, useLazyQuery } from '@apollo/client';
+import { apolloClient } from './API/backupClient';
 import { ME_QUERY } from './MeQuery';
 import UserContext from "./Context/UserContext";
 
@@ -61,12 +61,22 @@ const [toggle, setToggle] = useState(false);
 
 
   const redirect = () => {
-    window.location.href = `https://id.mtcc.com.mv/?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
+    const returnUrl = process.env.REACT_APP_RETURN_URL;
+    const appId = process.env.REACT_APP_APP_ID;
+    const type = "employee";
+    const loginUrl = `https://id.mtcc.com.mv/?returnUrl=${returnUrl}&type=${type}&appId=${appId}`;
+  
+    window.location.href = loginUrl;
   };
 
   const logoutRedirect = () => {
-    window.location.href = `https://id.mtcc.com.mv/logout/?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
-  };
+    const returnUrl = process.env.REACT_APP_RETURN_URL;
+    const appId = process.env.REACT_APP_APP_ID;
+    const type = "employee";
+    const logoutUrl = `https://id.mtcc.com.mv/logout/?returnUrl=${returnUrl}&type=${type}&appId=${appId}`;
+  
+      window.location.href = logoutUrl
+  };   
 
 
 const setPrevRoute = () => {
@@ -82,8 +92,9 @@ const [me] = useLazyQuery(ME_QUERY, {
     client: apolloClient,
     onCompleted: (data) => {
       // const roles: string[] = data.me.roles;
+    
       setUser({
-        ...data.me,
+        ...data,
        
       });
       setAppLoading(false);
@@ -117,9 +128,7 @@ interface SSOToken {
 
 useEffect(() => {
     const setLogOutStates = () => {
-      setPrevRoute();
-      setLoggedOut(true);
-      setAppLoading(false);
+        
     };
     if (user === null) {
       const token = localStorage.getItem("toms_token");
@@ -128,7 +137,7 @@ useEffect(() => {
         if (decoded.id) {
           me();
         } else {
-          setLogOutStates();
+          // setLogOutStates();
         }
       } else {
         if (window.location) {
@@ -139,13 +148,12 @@ useEffect(() => {
             localStorage.setItem("toms_token", `${tkn}`);
             const decoded = jwtDecode<SSOToken>(tkn);
             if (decoded.id) {
-              console.log('I was called!')
               me();
             } else {
-              setLogOutStates();
+              // setLogOutStates();
             }
           } else {
-            setLogOutStates();
+            // setLogOutStates();
           }
         }
       }
@@ -164,7 +172,7 @@ useEffect(() => {
         <h3>Loading...</h3>
       </div>
     );
-  }
+ }
 
   if (!appLoading && loggedOut) {
     if (localStorage.getItem("logOutClicked") === "true") {
@@ -175,25 +183,14 @@ useEffect(() => {
 
 
 
-
-
-
-
-  
-
-
-
-
   // const actionRef = useRef<{
   //   reload: () => void;
   // }>();
   
   return (
 
-  
-
-    
-
+    <UserContext.Provider value={{ user, setUser }}>
+    <ApolloProvider client={apolloClient}>  
       <ProLayout 
         style={{
           height: '100vh',display: 'flex'
@@ -274,60 +271,13 @@ useEffect(() => {
         }
         rightContentRender={() => (
           <div
-            // style={{
-            //   marginRight: '1rem',
-            // }}
+            
           >
-            {/* <Switch
-              checked={toggle}
-              onChange={() => {
-                setToggle(!toggle);
-              }}
-            /> */}
+            
           </div>
         )}
       >
-        {/* <PageContainer
-          content="FTD Module"
-          extra={[
-            <Button key="3">操作</Button>,
-            <Button key="2">操作</Button>,
-            <Button key="1" type="primary">
-              主操作
-            </Button>,
-          ]}
-          footer={[
-            <Button key="3">重置</Button>,
-            <Button key="2" type="primary">
-              提交
-            </Button>,
-          ]}
-          tabList={[
-
-            {
-              tab: '基本信息',
-              key: 'base',
-            },
-            {
-              tab: '详细信息',
-              key: 'info',
-            },
-          ]}
-          tabProps={{
-            onChange: (key) => {
-              console.log(key);
-            },
-          }}
-        > */}
-         
-    {/* <Button onClick={redirect}>
-         Click to Login
-    </Button>
-       
-       <Button onClick={logoutRedirect}>
-          Click to Logout
-        </Button>
-        </PageContainer> */}
+    
         
 
            <Contents/>
@@ -338,10 +288,9 @@ useEffect(() => {
        
       </ProLayout>
  
+      </ApolloProvider>
 
-
-
-
+      </UserContext.Provider>
 
 
 
@@ -351,49 +300,4 @@ useEffect(() => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-    // <Layout>
-        
-    //     <AppMenu onClick={onClick}/>
-
-    //      <Layout
-    //           style={{
-    //             //  minWidth: "88vw",
-    //             //  minHeight: "92vh", 
-                 
-    //           }}
-
-    //      >
-    //           <Header
-    //             style={{
-                  
-    //               display: "flex",
-    //               justifyContent: "center",
-    //               height: "6.3vh",
-    //               alignItems: "center",
-    //               color: 'white'
-                  
-                  
-    //             }}
-    //           > 
-    //           <Headers>  Fit to Drive Form </Headers></Header>
-                
-    //      <Content style={{marginLeft: 20, marginRight: 20}}>
-    //          <Contents/>
-    //      </Content>
-       
-    //       <Footer />
-
-    //       </Layout>
-
-    // </Layout>
       }

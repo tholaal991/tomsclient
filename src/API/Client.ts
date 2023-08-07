@@ -12,6 +12,8 @@ import {
       uri,
       credentials: "same-origin",
     });
+
+    console.log(process.env.REACT_APP_API_URL)
   
     const token = localStorage.getItem("toms_token");
 

@@ -33,8 +33,8 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "react-scripts start; graphql-codegen --config codegen.yml ",
-    "build": "react-scripts build; graphql-codegen --config codegen.yml",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "codegen": "graphql-codegen --config codegen.yml"
