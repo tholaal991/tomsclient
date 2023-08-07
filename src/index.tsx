@@ -1,38 +1,17 @@
-
-// src/index.tsx
-
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import { Provider } from 'react-redux';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
-import { store } from './Redux/store';
-import App from './App';
-import en_US from 'antd/lib/locale/en_US';
-import reportWebVitals from './reportWebVitals';
-import { ConfigProvider } from 'antd-mobile';
-// import { apolloClient as client } from './API/backupClient'
-
-// const client = new ApolloClient({
-//   uri: 'http://localhost:4000/graphql', 
-//   cache: new InMemoryCache(),
-// });
-
-const rootElement = document.getElementById('root');
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { BrowserRouter } from "react-router-dom";
 
 ReactDOM.render(
-  <React.StrictMode>
-    {/* <ApolloProvider client={client}> */}
-      <Provider store={store}>
-        <BrowserRouter>
-          <App />
-          
-        </BrowserRouter>
-      </Provider>
-    {/* </ApolloProvider> */}
-  </React.StrictMode>,
-  rootElement
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>,
+  document.getElementById("root")
 );
 
-
+// If you want to start measuring performance in your app, pass a function
+// to log results (for example: reportWebVitals(console.log))
+// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();

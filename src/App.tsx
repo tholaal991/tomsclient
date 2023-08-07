@@ -1,303 +1,200 @@
-
-import 'antd/dist/reset.css';
-import './App.css';
-import {useNavigate} from 'react-router-dom'
-import { Headers } from './components/Header';
-import { Footer } from './components/Footer';
-import { Layout, message } from 'antd';
-
-
-import { PageContainer, ProLayout } from '@ant-design/pro-components';
-import { Button, Switch } from 'antd';
-import { useEffect, useRef, useState } from 'react';
-import customMenuDate from './customMenu';
-import { icons } from 'antd/es/image/PreviewGroup';
-import { CheckMarkSVG } from './SVG/CheckMark.SVG';
-import { MtccSVG } from './SVG/MtccSVG';
-import Contents from './content';
-import { CarFilled, CiCircleFilled } from '@ant-design/icons';
-import { OperatorWindow } from './components/FTD/Operator/OperatorWindow';
-import React from 'react';
-import jwtDecode from 'jwt-decode';
-import Login from './Pages/Login/Login';
-import qs from 'qs';
-import { ApolloProvider, useLazyQuery } from '@apollo/client';
-import { apolloClient } from './API/backupClient';
-import { ME_QUERY } from './MeQuery';
+import { useLazyQuery, ApolloProvider } from "@apollo/client";
+import jwtDecode from "jwt-decode";
+import qs from "qs";
+import { useState, useEffect } from "react";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import { apolloClient } from "./API/backupClient";
 import UserContext from "./Context/UserContext";
+import { ME_QUERY } from "./MeQuery";
+import { Dashboard } from "./Pages/Dashboard/Dashboard";
+import Login from "./Pages/Login/Login";
+import { Applications } from "./Pages/Applications/Applications";
+import { Passed } from "./Pages/Passed/Passed";
+import { Practical } from "./Pages/Practical/Practical";
+import { Shortlist } from "./Pages/annoucement/Iulaan";
+import AddIcharge from "./components/FTD/AddIncharge";
+import { InchargeFtdFormMobile } from "./components/FTD/Incharge-Ftdform-mobile";
+import { OperatorWindow } from "./components/FTD/Operator/OperatorWindow";
+import TESTGENERIC from "./components/FTD/Report/TestGenericReport";
+import AntdFTDForm from "./components/FTD/antd-form";
+import { FtdMobile } from "./components/Ftdform-mobile";
+import { PassedPage } from "./components/PassedPage";
+import { Approval } from "./components/approvl";
+import { DeviceDetect } from "./components/devicedetect";
+import { Layout, message } from "antd";
 
-
-const waitTime = (time: number = 100) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, time);
-  });
-};
-
-let serviceData: any[] = customMenuDate;
-
-
-
-const { Content, Header} = Layout;
-
-export default function App() {
-
-  const navigate = useNavigate()
-
-  const onClick = (e:any) => {
-    if( e.key != undefined){
-      navigate(e.key)
-    }
-    console.log('click loged from parent',  e.key)
-  }
-
-
-  const [appLoading, setAppLoading] = useState(true);
-  const [user, setUser] = useState(null);
-  const [loggedOut, setLoggedOut] = useState(false);
-const [toggle, setToggle] = useState(false);
-  const [menuData, setMenuData] = useState([])
-
-
-  const redirect = () => {
-    const returnUrl = process.env.REACT_APP_RETURN_URL;
-    const appId = process.env.REACT_APP_APP_ID;
-    const type = "employee";
-    const loginUrl = `https://id.mtcc.com.mv/?returnUrl=${returnUrl}&type=${type}&appId=${appId}`;
-  
-    window.location.href = loginUrl;
-  };
-
-  const logoutRedirect = () => {
-    const returnUrl = process.env.REACT_APP_RETURN_URL;
-    const appId = process.env.REACT_APP_APP_ID;
-    const type = "employee";
-    const logoutUrl = `https://id.mtcc.com.mv/logout/?returnUrl=${returnUrl}&type=${type}&appId=${appId}`;
-  
-      window.location.href = logoutUrl
-  };   
-
-
-const setPrevRoute = () => {
-    const currentPath = window.location.pathname;
-    const token = localStorage.getItem("toms_token");
-    if (currentPath !== "/" && !token)
-      localStorage.setItem("prevRoute", currentPath);
-  };
-
-
-
-const [me] = useLazyQuery(ME_QUERY, {
-    client: apolloClient,
-    onCompleted: (data) => {
-      // const roles: string[] = data.me.roles;
-    
-      setUser({
-        ...data,
-       
-      });
-      setAppLoading(false);
-      setLoggedOut(false);
-    },
-    onError: (error) => {
-      localStorage.removeItem("toms_token");
-      setLoggedOut(true);
-      setAppLoading(false);
-
-      if (error.message === "Unauthorized") {
-        message.error("Not authorized to access this app.");
-      } else {
-        message.error("An error occurred while logging in.");
-      }
-    },
-  });
-
-
-
-
-
-
-interface SSOToken {
-    id: number;
-    type: string;
-    iat: number;
-    exp: number;
-  }
-
-
-useEffect(() => {
-    const setLogOutStates = () => {
-        
-    };
-    if (user === null) {
+const App = () => {
+  {
+    const navigate = useNavigate();
+    {
       const token = localStorage.getItem("toms_token");
       if (token) {
-        const decoded = jwtDecode<SSOToken>(token);
-        if (decoded.id) {
-          me();
-        } else {
-          // setLogOutStates();
-        }
-      } else {
-        if (window.location) {
-          const tkn = qs.parse(window.location.search, {
-            ignoreQueryPrefix: true,
-          }).token as string;
-          if (tkn) {
-            localStorage.setItem("toms_token", `${tkn}`);
-            const decoded = jwtDecode<SSOToken>(tkn);
-            if (decoded.id) {
-              me();
-            } else {
-              // setLogOutStates();
-            }
-          } else {
-            // setLogOutStates();
-          }
+        const prevRoute = localStorage.getItem("prevRoute");
+        if (prevRoute) {
+          localStorage.removeItem("prevRoute");
+          window.location.pathname = prevRoute;
         }
       }
     }
-  }, [user, me]);
 
-  const logout = () => { 
-    localStorage.removeItem("toms_token");
-    localStorage.setItem("logOutClicked", "true");
-    logoutRedirect();
-  };
+    const [appLoading, setAppLoading] = useState(false);
+    const [user, setUser] = useState(null);
+    const [loggedOut, setLoggedOut] = useState(false);
 
-  if (appLoading) {
-    return (
-      <div style={{ padding: "40px" }}>
-        <h3>Loading...</h3>
-      </div>
-    );
- }
+    const [me] = useLazyQuery(ME_QUERY, {
+      client: apolloClient,
+      onCompleted: (data) => {
+        setUser({
+          ...data.me,
+        });
+        setAppLoading(false);
+        setLoggedOut(false);
+        // alert('hello')
+      },
+      onError: (error) => {
+        console.log(error);
+        localStorage.setItem("logOutClicked", "true");
+        localStorage.removeItem("toms_token");
+        setLoggedOut(true);
+        setAppLoading(false);
+        // alert("An error occurred while logging in.");
+      },
+    });
 
-  if (!appLoading && loggedOut) {
-    if (localStorage.getItem("logOutClicked") === "true") {
-      return <Login login={redirect} />;
-    } redirect();
-  }
-  
+    // const { loading, error, data } = useQuery(CUSTOMER, {
+    //   client: client,
+    //   onCompleted: (data) => {
+    //     console.log('Customer query completed:', data);
+    //   },
+    //   onError: (error) => {
+    //     console.error('Customer query error:', error);
+    //   },
+    // });
 
+    // SSO Employee
+    const redirect = () => {
+      localStorage.setItem("logOutClicked", "false");
+      window.location.href = `https://id.mtcc.com.mv/login/employee/ad?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
+    };
 
+    const logoutRedirect = () => {
+      setPrevRoute();
+      window.location.href = `https://id.mtcc.com.mv/logout/employee/ad?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
+    };
 
-  // const actionRef = useRef<{
-  //   reload: () => void;
-  // }>();
-  
-  return (
+    const setPrevRoute = () => {
+      const currentPath = window.location.pathname;
+      const token = localStorage.getItem("toms_token");
+      if (currentPath !== "/" && !token)
+        localStorage.setItem("prevRoute", currentPath);
+    };
 
-    <UserContext.Provider value={{ user, setUser }}>
-    <ApolloProvider client={apolloClient}>  
-      <ProLayout 
-        style={{
-          height: '100vh',display: 'flex'
-        }}
-        menuDataRender={() => [{
-          path: '/operator',
-          name: 'Fit to Drive',
-          icon: <CarFilled/>,
-          component: '../components/FTD/Operator/OperatorWindow',
-          hideChildrenInMenu: false,
-          children: [
-            {
-              path: '/operator',
-              name: 'Operator',
-              icon: <CarFilled/>,
-              component: '../components/FTD/Operator/OperatorWindow',
-            },
-            {
-               path: '/inchargeftd',
-  
-               name: 'Submit Ftd',
-               icon: <CarFilled/>,
-               component: '../components/FTD/Incharge-Ftdform-mobile',
-            },  
-            {
-              path: '/approval',
-              name: 'FTD Approval Page',
-              icon: <CarFilled/>,
-              component: '../components/FTD/Incharge-Ftdform-mobile',
-           }, 
-           {
-            path: '/ftdreport',
-            name: 'FTD Report',
-            icon: <CarFilled/>,
-            component: '../components/FTD/Report/TestGenericReport',
+    interface SSOToken {
+      id: number;
+      type: string;
+      iat: number;
+      exp: number;
+    }
 
-         },    {
-          path: '/addincharge',
-          name: 'Manage Shift Incharge',
-          icon: <CarFilled/>,
-          component: '../componets/FTD/Report/AddIncharge',
+    useEffect(() => {
+      const setLogOutStates = () => {
+        setPrevRoute();
+        setLoggedOut(true);
+        setAppLoading(false);
+      };
 
-       }, 
-         
-
-
-          ]
-        }]}
-        // actionRef={actionRef}
-        suppressSiderWhenMenuEmpty={toggle}
-        title='Fit to Drive'
-        logo={<MtccSVG/>}
-        menu={
-          {
-          request: async () => {
-            await waitTime(2000);
-            return serviceData;
-          },
-        }}
-        menuItemRender={(item, dom) => {
-          return (
-            <a
-              onClick={() => {
-                if (item.path) {
-                  window.location.href = item.path;
-                }
-              }}
-            >
-              {dom}
-            </a>
-          );
+      if (user === null) {
+        const token = localStorage.getItem("toms_token");
+        if (token) {
+          const decoded = jwtDecode<SSOToken>(token);
+          console.log(decoded);
+          if (decoded.id) {
+            me();
+            // console.log(me())
+          } else {
+            setLogOutStates();
+          }
+        } else {
+          if (window.location) {
+            const tkn = qs.parse(window.location.search, {
+              ignoreQueryPrefix: true,
+            }).token as string;
+            if (tkn) {
+              localStorage.setItem("toms_token", `${tkn}`);
+              const decoded = jwtDecode<SSOToken>(tkn);
+              if (decoded.id) {
+                me();
+              } else {
+                setLogOutStates();
+              }
+            } else {
+              setLogOutStates();
+            }
+          } else {
+            setLogOutStates();
+          }
         }
-        }
-        location={
-          {
-          pathname: '/o',
-        }
-        }
-        rightContentRender={() => (
-          <div
-            
-          >
-            
-          </div>
-        )}
-      >
-    
-        
-
-           <Contents/>
-        
-       
-
-         
-       
-      </ProLayout>
- 
-      </ApolloProvider>
-
-      </UserContext.Provider>
-
-
-
-
-
-  );
-
-
-
+      } else {
+        setAppLoading(false);
       }
+    }, [user, me]);
+
+    const logout = () => {
+      console.log("Logout fuction was called!");
+      localStorage.setItem("logOutClicked", "true");
+      localStorage.removeItem("toms_token");
+      logoutRedirect();
+    };
+
+    if (appLoading) {
+      return (
+        <div style={{ padding: "40px" }}>
+          <h3>Loading...</h3>
+        </div>
+      );
+    }
+
+    if (!appLoading && loggedOut) {
+      if (localStorage.getItem("logOutClicked") === "true") {
+        return <Login login={redirect} />;
+      }
+      redirect();
+    }
+
+    return (
+      <UserContext.Provider value={{ user, setUser, logout }}>
+        <ApolloProvider client={apolloClient}>
+          <Layout>
+            <Routes>
+              <Route path="/test" element={<Dashboard />}></Route>
+              <Route path="/dashboard" element={<Dashboard />}></Route>
+              <Route path="/applications" element={<Applications />}></Route>
+
+              <Route path="/passed" element={<Passed />}></Route>
+              <Route path="/practical" element={<Practical />}></Route>
+              <Route path="/shortlist" element={<Shortlist />}></Route>
+
+              <Route path="/submitftd" element={<FtdMobile />}></Route>
+              <Route path="/device" element={<DeviceDetect />}></Route>
+              <Route path="/approval" element={<Approval />}></Route>
+              <Route path="/pro" element={<AntdFTDForm />}></Route>
+
+              <Route path="/ftdreport" element={<TESTGENERIC />}></Route>
+
+              <Route path="/123" element={<PassedPage />}></Route>
+              <Route path="/operator" element={<OperatorWindow />}></Route>
+              <Route path="/testgeneric" element={<TESTGENERIC />}></Route>
+              <Route
+                path="/inchargeftd"
+                element={<InchargeFtdFormMobile />}
+              ></Route>
+              <Route path="/addincharge" element={<AddIcharge />}></Route>
+              {/* <Route path="/" element={<h2> hi how are you </h2>}></Route> */}
+            </Routes>
+          </Layout>
+        </ApolloProvider>
+      </UserContext.Provider>
+    );
+  }
+};
+export default App;
