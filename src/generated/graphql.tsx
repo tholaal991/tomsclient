@@ -18,6 +18,25 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
 };
 
+export type ApsAllShiftPlans = {
+  __typename?: 'APSAllShiftPlans';
+  description?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['Int']['output']>;
+  modified_by?: Maybe<Scalars['String']['output']>;
+  modified_on?: Maybe<Scalars['String']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  shiftType?: Maybe<ApsShiftType>;
+  shift_type_id?: Maybe<Scalars['Int']['output']>;
+  start_date?: Maybe<Scalars['String']['output']>;
+};
+
+export type ApsShiftType = {
+  __typename?: 'APSShiftType';
+  description?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['Int']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+};
+
 export type CreateFtdformInput = {
   forty_eight_hour_score: Scalars['Float']['input'];
   good_health_score: Scalars['Float']['input'];
@@ -40,6 +59,13 @@ export type CreateShiftInput = {
 export type CreateUserInput = {
   name?: InputMaybe<Scalars['String']['input']>;
   rcn: Scalars['Int']['input'];
+  uuid?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type CreateUserWithRoleInput = {
+  rcn: Scalars['Float']['input'];
+  roleId: Scalars['Int']['input'];
+  uuid?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type Ftdapproval = {
@@ -69,8 +95,9 @@ export type Ftdform = {
 
 export type Incharge = {
   __typename?: 'Incharge';
-  /** Example field (placeholder) */
-  rcn: Scalars['Int']['output'];
+  name?: Maybe<Scalars['String']['output']>;
+  rcn?: Maybe<Scalars['Int']['output']>;
+  shiftId?: Maybe<Scalars['Float']['output']>;
 };
 
 export type Mutation = {
@@ -79,6 +106,7 @@ export type Mutation = {
   createIncharge: Incharge;
   createShift?: Maybe<Shift>;
   createUser: User;
+  createUserWithRole: User;
   findAll: Ftdapproval;
   removeFtdapproval: Ftdapproval;
   removeFtdform: Ftdform;
@@ -87,11 +115,13 @@ export type Mutation = {
   removeShift: Shift;
   removeShiftPlan: ShiftPlans;
   removeUser: User;
+  setUserRole: User;
   update: ShiftPlans;
   updateApprovalStatus: Ftdform;
   updateFtdapproval: Ftdapproval;
   updateFtdform: Ftdform;
   updateIncharge: Incharge;
+  updateInchargesForShift: Shift;
   updateShift: Shift;
 };
 
@@ -113,6 +143,11 @@ export type MutationCreateShiftArgs = {
 
 export type MutationCreateUserArgs = {
   createUserInput: CreateUserInput;
+};
+
+
+export type MutationCreateUserWithRoleArgs = {
+  createUserWithRoleInput: CreateUserWithRoleInput;
 };
 
 
@@ -151,6 +186,11 @@ export type MutationRemoveUserArgs = {
 };
 
 
+export type MutationSetUserRoleArgs = {
+  data: SetUserRoleInput;
+};
+
+
 export type MutationUpdateArgs = {
   updateShiftplanInput: UpdateShiftplanInput;
 };
@@ -177,25 +217,55 @@ export type MutationUpdateInchargeArgs = {
 };
 
 
+export type MutationUpdateInchargesForShiftArgs = {
+  newInchargeRcns: Array<Scalars['Int']['input']>;
+  shiftId: Scalars['Int']['input'];
+};
+
+
 export type MutationUpdateShiftArgs = {
   updateShiftInput: UpdateShiftInput;
 };
 
 export type Query = {
   __typename?: 'Query';
+  APSgetAllShiftPlans?: Maybe<Array<ApsAllShiftPlans>>;
+  GetUserByUUID: User;
+  GetUserRolesByRCN: Array<Scalars['Float']['output']>;
+  findtShiftsForShiftPlanID: Array<Shift>;
   form: Ftdform;
   formsByInchargeId: Array<Ftdform>;
   formsByUserId: Array<Ftdform>;
   ftdapproval: Ftdapproval;
   ftdform: Array<Ftdform>;
   getAllForms: Array<Ftdform>;
+  getAllIncharges: Array<Incharge>;
   getAllUsers: Array<User>;
   getFormById: Ftdform;
+  getHello: Scalars['String']['output'];
+  getInchargesByShiftId: Array<Incharge>;
+  getShiftUsers?: Maybe<Array<User>>;
+  getUserUUID: User;
   getoneshiftplan: ShiftPlans;
   incharge: Incharge;
   shift: Shift;
   shiftplans: Array<ShiftPlans>;
   user: User;
+};
+
+
+export type QueryGetUserByUuidArgs = {
+  uuid: Scalars['String']['input'];
+};
+
+
+export type QueryGetUserRolesByRcnArgs = {
+  rcn: Scalars['Int']['input'];
+};
+
+
+export type QueryFindtShiftsForShiftPlanIdArgs = {
+  shiftPlanID: Scalars['Int']['input'];
 };
 
 
@@ -224,6 +294,16 @@ export type QueryGetFormByIdArgs = {
 };
 
 
+export type QueryGetInchargesByShiftIdArgs = {
+  shiftId: Scalars['Int']['input'];
+};
+
+
+export type QueryGetShiftUsersArgs = {
+  shiftId: Scalars['Int']['input'];
+};
+
+
 export type QueryGetoneshiftplanArgs = {
   id: Scalars['Float']['input'];
 };
@@ -235,7 +315,7 @@ export type QueryInchargeArgs = {
 
 
 export type QueryShiftArgs = {
-  shiftPlanID: Scalars['Int']['input'];
+  id: Scalars['Int']['input'];
 };
 
 
@@ -243,23 +323,30 @@ export type QueryUserArgs = {
   id: Scalars['Int']['input'];
 };
 
+export type SetUserRoleInput = {
+  role: UserRole;
+  userId: Scalars['Float']['input'];
+};
+
 export type Shift = {
   __typename?: 'Shift';
-  id: Scalars['Int']['output'];
+  id?: Maybe<Scalars['Int']['output']>;
+  incharges?: Maybe<Array<Incharge>>;
   shift_description?: Maybe<Scalars['String']['output']>;
   shift_end?: Maybe<Scalars['DateTime']['output']>;
   shift_name?: Maybe<Scalars['String']['output']>;
   start_date?: Maybe<Scalars['DateTime']['output']>;
   start_time?: Maybe<Scalars['DateTime']['output']>;
-  users: User;
+  users?: Maybe<User>;
 };
 
 export type ShiftPlans = {
   __typename?: 'ShiftPlans';
-  descrpton: Scalars['String']['output'];
-  id: Scalars['Int']['output'];
-  shiftType: Scalars['Int']['output'];
-  valid: Scalars['Boolean']['output'];
+  description?: Maybe<Scalars['String']['output']>;
+  id?: Maybe<Scalars['Int']['output']>;
+  name?: Maybe<Scalars['String']['output']>;
+  shiftType?: Maybe<Scalars['Int']['output']>;
+  valid?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type UpdateFtdapprovalInput = {
@@ -306,8 +393,18 @@ export type UpdateShiftplanInput = {
 export type User = {
   __typename?: 'User';
   name?: Maybe<Scalars['String']['output']>;
-  rcn: Scalars['Int']['output'];
+  rcn?: Maybe<Scalars['Int']['output']>;
+  roletype?: Maybe<Scalars['String']['output']>;
+  uuid?: Maybe<Scalars['String']['output']>;
 };
+
+export enum UserRole {
+  FtdAdmin = 'FTDAdmin',
+  FtdIncharge = 'FTDIncharge',
+  FtdOperator = 'FTDOperator',
+  NoRole = 'NoRole',
+  SuperAdmin = 'SuperAdmin'
+}
 
 export type FormsByUserIdQueryVariables = Exact<{
   userId: Scalars['Int']['input'];
@@ -319,7 +416,7 @@ export type FormsByUserIdQuery = { __typename?: 'Query', formsByUserId: Array<{ 
 export type GetAllUsersQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllUsersQuery = { __typename?: 'Query', getAllUsers: Array<{ __typename?: 'User', name?: string | null, rcn: number }> };
+export type GetAllUsersQuery = { __typename?: 'Query', getAllUsers: Array<{ __typename?: 'User', name?: string | null, rcn?: number | null }> };
 
 export type FormsByInchargeIdQueryVariables = Exact<{
   inchargeId: Scalars['Int']['input'];
@@ -341,24 +438,65 @@ export type GetFtdformWithOperatorQueryVariables = Exact<{
 }>;
 
 
-export type GetFtdformWithOperatorQuery = { __typename?: 'Query', form: { __typename?: 'Ftdform', id?: number | null, operator: { __typename?: 'User', rcn: number, name?: string | null } } };
+export type GetFtdformWithOperatorQuery = { __typename?: 'Query', form: { __typename?: 'Ftdform', id?: number | null, operator: { __typename?: 'User', rcn?: number | null, name?: string | null } } };
 
 export type UpdateFtdformMutationVariables = Exact<{
   updateFtdformInput: UpdateFtdformInput;
 }>;
 
 
-export type UpdateFtdformMutation = { __typename?: 'Mutation', updateFtdform: { __typename?: 'Ftdform', id?: number | null, operatorId?: number | null, shiftId?: number | null, inchargeId?: number | null, approval_status?: number | null, good_health_score?: number | null, taking_medicine_score?: number | null, twenty_four_hour_score?: number | null, forty_eight_hour_score?: number | null, operator: { __typename?: 'User', rcn: number } } };
+export type UpdateFtdformMutation = { __typename?: 'Mutation', updateFtdform: { __typename?: 'Ftdform', id?: number | null, operatorId?: number | null, shiftId?: number | null, inchargeId?: number | null, approval_status?: number | null, good_health_score?: number | null, taking_medicine_score?: number | null, twenty_four_hour_score?: number | null, forty_eight_hour_score?: number | null, operator: { __typename?: 'User', rcn?: number | null } } };
 
 export type GetAllFormsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllFormsQuery = { __typename?: 'Query', getAllForms: Array<{ __typename?: 'Ftdform', id?: number | null, shiftId?: number | null, approval_status?: number | null, operatorId?: number | null, riskLevel?: string | null, createdAt?: any | null, appliedOn?: any | null, operator: { __typename?: 'User', rcn: number, name?: string | null } }> };
+export type GetAllFormsQuery = { __typename?: 'Query', getAllForms: Array<{ __typename?: 'Ftdform', id?: number | null, shiftId?: number | null, approval_status?: number | null, operatorId?: number | null, riskLevel?: string | null, createdAt?: any | null, appliedOn?: any | null, operator: { __typename?: 'User', rcn?: number | null, name?: string | null } }> };
 
 export type ShiftplansQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ShiftplansQuery = { __typename?: 'Query', shiftplans: Array<{ __typename?: 'ShiftPlans', id: number, valid: boolean }> };
+export type ShiftplansQuery = { __typename?: 'Query', shiftplans: Array<{ __typename?: 'ShiftPlans', id?: number | null, valid?: boolean | null, description?: string | null }> };
+
+export type FindtShiftsForShiftPlanIdQueryVariables = Exact<{
+  shiftPlanId: Scalars['Int']['input'];
+}>;
+
+
+export type FindtShiftsForShiftPlanIdQuery = { __typename?: 'Query', findtShiftsForShiftPlanID: Array<{ __typename?: 'Shift', id?: number | null, shift_description?: string | null, shift_end?: any | null, shift_name?: string | null, start_time?: any | null, start_date?: any | null }> };
+
+export type GetShiftUsersQueryVariables = Exact<{
+  shiftId: Scalars['Int']['input'];
+}>;
+
+
+export type GetShiftUsersQuery = { __typename?: 'Query', getShiftUsers?: Array<{ __typename?: 'User', rcn?: number | null, name?: string | null }> | null };
+
+export type MutationMutationVariables = Exact<{
+  shiftId: Scalars['Int']['input'];
+  newInchargeRcns: Array<Scalars['Int']['input']> | Scalars['Int']['input'];
+}>;
+
+
+export type MutationMutation = { __typename?: 'Mutation', updateInchargesForShift: { __typename?: 'Shift', id?: number | null, shift_description?: string | null, incharges?: Array<{ __typename?: 'Incharge', rcn?: number | null, name?: string | null }> | null } };
+
+export type GetInchargesByShiftIdQueryVariables = Exact<{
+  shiftId: Scalars['Int']['input'];
+}>;
+
+
+export type GetInchargesByShiftIdQuery = { __typename?: 'Query', getInchargesByShiftId: Array<{ __typename?: 'Incharge', rcn?: number | null, name?: string | null }> };
+
+export type CreateInchargeMutationVariables = Exact<{
+  createInchargeInput: CreateInchargeInput;
+}>;
+
+
+export type CreateInchargeMutation = { __typename?: 'Mutation', createIncharge: { __typename?: 'Incharge', rcn?: number | null } };
+
+export type GetAllInchargesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllInchargesQuery = { __typename?: 'Query', getAllIncharges: Array<{ __typename?: 'Incharge', rcn?: number | null, name?: string | null, shiftId?: number | null }> };
 
 
 export const FormsByUserIdDocument = gql`
@@ -640,6 +778,7 @@ export const ShiftplansDocument = gql`
   shiftplans {
     id
     valid
+    description
   }
 }
     `;
@@ -670,3 +809,223 @@ export function useShiftplansLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions
 export type ShiftplansQueryHookResult = ReturnType<typeof useShiftplansQuery>;
 export type ShiftplansLazyQueryHookResult = ReturnType<typeof useShiftplansLazyQuery>;
 export type ShiftplansQueryResult = Apollo.QueryResult<ShiftplansQuery, ShiftplansQueryVariables>;
+export const FindtShiftsForShiftPlanIdDocument = gql`
+    query FindtShiftsForShiftPlanID($shiftPlanId: Int!) {
+  findtShiftsForShiftPlanID(shiftPlanID: $shiftPlanId) {
+    id
+    shift_description
+    shift_end
+    shift_name
+    start_time
+    start_date
+  }
+}
+    `;
+
+/**
+ * __useFindtShiftsForShiftPlanIdQuery__
+ *
+ * To run a query within a React component, call `useFindtShiftsForShiftPlanIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindtShiftsForShiftPlanIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindtShiftsForShiftPlanIdQuery({
+ *   variables: {
+ *      shiftPlanId: // value for 'shiftPlanId'
+ *   },
+ * });
+ */
+export function useFindtShiftsForShiftPlanIdQuery(baseOptions: Apollo.QueryHookOptions<FindtShiftsForShiftPlanIdQuery, FindtShiftsForShiftPlanIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindtShiftsForShiftPlanIdQuery, FindtShiftsForShiftPlanIdQueryVariables>(FindtShiftsForShiftPlanIdDocument, options);
+      }
+export function useFindtShiftsForShiftPlanIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindtShiftsForShiftPlanIdQuery, FindtShiftsForShiftPlanIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindtShiftsForShiftPlanIdQuery, FindtShiftsForShiftPlanIdQueryVariables>(FindtShiftsForShiftPlanIdDocument, options);
+        }
+export type FindtShiftsForShiftPlanIdQueryHookResult = ReturnType<typeof useFindtShiftsForShiftPlanIdQuery>;
+export type FindtShiftsForShiftPlanIdLazyQueryHookResult = ReturnType<typeof useFindtShiftsForShiftPlanIdLazyQuery>;
+export type FindtShiftsForShiftPlanIdQueryResult = Apollo.QueryResult<FindtShiftsForShiftPlanIdQuery, FindtShiftsForShiftPlanIdQueryVariables>;
+export const GetShiftUsersDocument = gql`
+    query GetShiftUsers($shiftId: Int!) {
+  getShiftUsers(shiftId: $shiftId) {
+    rcn
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetShiftUsersQuery__
+ *
+ * To run a query within a React component, call `useGetShiftUsersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetShiftUsersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetShiftUsersQuery({
+ *   variables: {
+ *      shiftId: // value for 'shiftId'
+ *   },
+ * });
+ */
+export function useGetShiftUsersQuery(baseOptions: Apollo.QueryHookOptions<GetShiftUsersQuery, GetShiftUsersQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetShiftUsersQuery, GetShiftUsersQueryVariables>(GetShiftUsersDocument, options);
+      }
+export function useGetShiftUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetShiftUsersQuery, GetShiftUsersQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetShiftUsersQuery, GetShiftUsersQueryVariables>(GetShiftUsersDocument, options);
+        }
+export type GetShiftUsersQueryHookResult = ReturnType<typeof useGetShiftUsersQuery>;
+export type GetShiftUsersLazyQueryHookResult = ReturnType<typeof useGetShiftUsersLazyQuery>;
+export type GetShiftUsersQueryResult = Apollo.QueryResult<GetShiftUsersQuery, GetShiftUsersQueryVariables>;
+export const MutationDocument = gql`
+    mutation Mutation($shiftId: Int!, $newInchargeRcns: [Int!]!) {
+  updateInchargesForShift(shiftId: $shiftId, newInchargeRcns: $newInchargeRcns) {
+    id
+    shift_description
+    incharges {
+      rcn
+      name
+    }
+  }
+}
+    `;
+export type MutationMutationFn = Apollo.MutationFunction<MutationMutation, MutationMutationVariables>;
+
+/**
+ * __useMutationMutation__
+ *
+ * To run a mutation, you first call `useMutationMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMutationMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [mutationMutation, { data, loading, error }] = useMutationMutation({
+ *   variables: {
+ *      shiftId: // value for 'shiftId'
+ *      newInchargeRcns: // value for 'newInchargeRcns'
+ *   },
+ * });
+ */
+export function useMutationMutation(baseOptions?: Apollo.MutationHookOptions<MutationMutation, MutationMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MutationMutation, MutationMutationVariables>(MutationDocument, options);
+      }
+export type MutationMutationHookResult = ReturnType<typeof useMutationMutation>;
+export type MutationMutationResult = Apollo.MutationResult<MutationMutation>;
+export type MutationMutationOptions = Apollo.BaseMutationOptions<MutationMutation, MutationMutationVariables>;
+export const GetInchargesByShiftIdDocument = gql`
+    query GetInchargesByShiftId($shiftId: Int!) {
+  getInchargesByShiftId(shiftId: $shiftId) {
+    rcn
+    name
+  }
+}
+    `;
+
+/**
+ * __useGetInchargesByShiftIdQuery__
+ *
+ * To run a query within a React component, call `useGetInchargesByShiftIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetInchargesByShiftIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetInchargesByShiftIdQuery({
+ *   variables: {
+ *      shiftId: // value for 'shiftId'
+ *   },
+ * });
+ */
+export function useGetInchargesByShiftIdQuery(baseOptions: Apollo.QueryHookOptions<GetInchargesByShiftIdQuery, GetInchargesByShiftIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetInchargesByShiftIdQuery, GetInchargesByShiftIdQueryVariables>(GetInchargesByShiftIdDocument, options);
+      }
+export function useGetInchargesByShiftIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetInchargesByShiftIdQuery, GetInchargesByShiftIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetInchargesByShiftIdQuery, GetInchargesByShiftIdQueryVariables>(GetInchargesByShiftIdDocument, options);
+        }
+export type GetInchargesByShiftIdQueryHookResult = ReturnType<typeof useGetInchargesByShiftIdQuery>;
+export type GetInchargesByShiftIdLazyQueryHookResult = ReturnType<typeof useGetInchargesByShiftIdLazyQuery>;
+export type GetInchargesByShiftIdQueryResult = Apollo.QueryResult<GetInchargesByShiftIdQuery, GetInchargesByShiftIdQueryVariables>;
+export const CreateInchargeDocument = gql`
+    mutation CreateIncharge($createInchargeInput: CreateInchargeInput!) {
+  createIncharge(createInchargeInput: $createInchargeInput) {
+    rcn
+  }
+}
+    `;
+export type CreateInchargeMutationFn = Apollo.MutationFunction<CreateInchargeMutation, CreateInchargeMutationVariables>;
+
+/**
+ * __useCreateInchargeMutation__
+ *
+ * To run a mutation, you first call `useCreateInchargeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateInchargeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createInchargeMutation, { data, loading, error }] = useCreateInchargeMutation({
+ *   variables: {
+ *      createInchargeInput: // value for 'createInchargeInput'
+ *   },
+ * });
+ */
+export function useCreateInchargeMutation(baseOptions?: Apollo.MutationHookOptions<CreateInchargeMutation, CreateInchargeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateInchargeMutation, CreateInchargeMutationVariables>(CreateInchargeDocument, options);
+      }
+export type CreateInchargeMutationHookResult = ReturnType<typeof useCreateInchargeMutation>;
+export type CreateInchargeMutationResult = Apollo.MutationResult<CreateInchargeMutation>;
+export type CreateInchargeMutationOptions = Apollo.BaseMutationOptions<CreateInchargeMutation, CreateInchargeMutationVariables>;
+export const GetAllInchargesDocument = gql`
+    query GetAllIncharges {
+  getAllIncharges {
+    rcn
+    name
+    shiftId
+  }
+}
+    `;
+
+/**
+ * __useGetAllInchargesQuery__
+ *
+ * To run a query within a React component, call `useGetAllInchargesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllInchargesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllInchargesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllInchargesQuery(baseOptions?: Apollo.QueryHookOptions<GetAllInchargesQuery, GetAllInchargesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllInchargesQuery, GetAllInchargesQueryVariables>(GetAllInchargesDocument, options);
+      }
+export function useGetAllInchargesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllInchargesQuery, GetAllInchargesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllInchargesQuery, GetAllInchargesQueryVariables>(GetAllInchargesDocument, options);
+        }
+export type GetAllInchargesQueryHookResult = ReturnType<typeof useGetAllInchargesQuery>;
+export type GetAllInchargesLazyQueryHookResult = ReturnType<typeof useGetAllInchargesLazyQuery>;
+export type GetAllInchargesQueryResult = Apollo.QueryResult<GetAllInchargesQuery, GetAllInchargesQueryVariables>;

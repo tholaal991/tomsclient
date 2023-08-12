@@ -41,132 +41,132 @@ export default function App() {
   const [toggle, setToggle] = useState(false);
   const navigate = useNavigate();
 
-  const onClick = (e: any) => {
-    if (e.key != undefined) {
-      navigate(e.key);
-    }
-    console.log("click loged from parent", e.key);
-  };
+  // const onClick = (e: any) => {
+  //   if (e.key != undefined) {
+  //     navigate(e.key);
+  //   }
+  //   console.log("click loged from parent", e.key);
+  // };
 
-  {
-    const token = localStorage.getItem("toms_token");
-    if (token) {
-      const prevRoute = localStorage.getItem("prevRoute");
-      if (prevRoute) {
-        localStorage.removeItem("prevRoute");
-        window.location.pathname = prevRoute;
-      }
-    }
-  }
+  // {
+  //   const token = localStorage.getItem("toms_token");
+  //   if (token) {
+  //     const prevRoute = localStorage.getItem("prevRoute");
+  //     if (prevRoute) {
+  //       localStorage.removeItem("prevRoute");
+  //       window.location.pathname = prevRoute;
+  //     }
+  //   }
+  // }
 
-  const [me] = useLazyQuery(ME_QUERY, {
-    client: apolloClient,
-    onCompleted: (data) => {
-      setUser({
-        ...data.me,
-      });
-      setAppLoading(false);
-      setLoggedOut(false);
-    },
-    onError: (error) => {
-      localStorage.removeItem("toms_token");
-      localStorage.setItem("logOutClicked", "true");
-      setLoggedOut(true);
-      setAppLoading(false);
-      if (error.message === "Unauthorized") {
-        message.error("Not authorized to access this app.");
-      } else {
-        message.error("An error occurred while logging in.");
-      }
-    },
-    fetchPolicy: "network-only",
-    nextFetchPolicy: "cache-first",
-  });
+  // const [me] = useLazyQuery(ME_QUERY, {
+  //   client: apolloClient,
+  //   onCompleted: (data) => {
+  //     setUser({
+  //       ...data.me,
+  //     });
+  //     setAppLoading(false);
+  //     setLoggedOut(false);
+  //   },
+  //   onError: (error) => {
+  //     localStorage.removeItem("toms_token");
+  //     localStorage.setItem("logOutClicked", "true");
+  //     setLoggedOut(true);
+  //     setAppLoading(false);
+  //     if (error.message === "Unauthorized") {
+  //       message.error("Not authorized to access this app.");
+  //     } else {
+  //       message.error("An error occurred while logging in.");
+  //     }
+  //   },
+  //   fetchPolicy: "network-only",
+  //   nextFetchPolicy: "cache-first",
+  // });
 
-  const redirect = () => {
-    localStorage.setItem("logOutClicked", "false");
-    window.location.href = `https://id.mtcc.com.mv/?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
-  };
+  // const redirect = () => {
+  //   localStorage.setItem("logOutClicked", "false");
+  //   window.location.href = `https://id.mtcc.com.mv/?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
+  // };
 
-  const logoutRedirect = () => {
-    setPrevRoute();
-    window.location.href = `https://id.mtcc.com.mv/logout/?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
-  };
+  // const logoutRedirect = () => {
+  //   setPrevRoute();
+  //   window.location.href = `https://id.mtcc.com.mv/logout/?returnUrl=${process.env.REACT_APP_RETURN_URL}&type=employee&appId=${process.env.REACT_APP_APP_ID}`;
+  // };
 
-  const setPrevRoute = () => {
-    const currentPath = window.location.pathname;
-    const token = localStorage.getItem("toms_token");
-    if (currentPath !== "/" && !token)
-      localStorage.setItem("prevRoute", currentPath);
-  };
+  // const setPrevRoute = () => {
+  //   const currentPath = window.location.pathname;
+  //   const token = localStorage.getItem("toms_token");
+  //   if (currentPath !== "/" && !token)
+  //     localStorage.setItem("prevRoute", currentPath);
+  // };
 
-  interface SSOToken {
-    id: number;
-    type: string;
-    iat: number;
-    exp: number;
-  }
+  // interface SSOToken {
+  //   id: number;
+  //   type: string;
+  //   iat: number;
+  //   exp: number;
+  // }
 
-  useEffect(() => {
-    const setLogOutStates = () => {
-      setPrevRoute();
-      setLoggedOut(true);
-      setAppLoading(false);
-    };
-    if (user === null) {
-      const token = localStorage.getItem("toms_token");
-      if (token) {
-        const decoded = jwtDecode<SSOToken>(token);
-        if (decoded.id) {
-          me();
-        } else {
-          setLogOutStates();
-        }
-      } else {
-        if (window.location) {
-          const tkn = qs.parse(window.location.search, {
-            ignoreQueryPrefix: true,
-          }).token as string;
-          if (tkn) {
-            localStorage.setItem("toms_token", `${tkn}`);
-            const decoded = jwtDecode<SSOToken>(tkn);
-            if (decoded.id) {
-              me();
-            } else {
-              setLogOutStates();
-            }
-          } else {
-            setLogOutStates();
-          }
-        } else {
-          setLogOutStates();
-        }
-      }
-    } else {
-      setAppLoading(false);
-    }
-  }, [user, me]);
+  // useEffect(() => {
+  //   const setLogOutStates = () => {
+  //     setPrevRoute();
+  //     setLoggedOut(true);
+  //     setAppLoading(false);
+  //   };
+  //   if (user === null) {
+  //     const token = localStorage.getItem("toms_token");
+  //     if (token) {
+  //       const decoded = jwtDecode<SSOToken>(token);
+  //       if (decoded.id) {
+  //         me();
+  //       } else {
+  //         setLogOutStates();
+  //       }
+  //     } else {
+  //       if (window.location) {
+  //         const tkn = qs.parse(window.location.search, {
+  //           ignoreQueryPrefix: true,
+  //         }).token as string;
+  //         if (tkn) {
+  //           localStorage.setItem("toms_token", `${tkn}`);
+  //           const decoded = jwtDecode<SSOToken>(tkn);
+  //           if (decoded.id) {
+  //             me();
+  //           } else {
+  //             setLogOutStates();
+  //           }
+  //         } else {
+  //           setLogOutStates();
+  //         }
+  //       } else {
+  //         setLogOutStates();
+  //       }
+  //     }
+  //   } else {
+  //     setAppLoading(false);
+  //   }
+  // }, [user, me]);
 
-  const logout = () => {
-    localStorage.removeItem("toms_token");
-    localStorage.setItem("logOutClicked", "true");
-    logoutRedirect();
-  };
+  // const logout = () => {
+  //   localStorage.removeItem("toms_token");
+  //   localStorage.setItem("logOutClicked", "true");
+  //   logoutRedirect();
+  // };
 
-  if (appLoading) {
-    return (
-      <div style={{ padding: "40px" }}>
-        <h3>Loading...</h3>
-      </div>
-    );
-  }
+  // if (appLoading) {
+  //   return (
+  //     <div style={{ padding: "40px" }}>
+  //       <h3>Loading...</h3>
+  //     </div>
+  //   );
+  // }
 
-  if (!appLoading && loggedOut) {
-    if (localStorage.getItem("logOutClicked") === "true") {
-      return <Login login={redirect} />;
-    }
-    redirect();
-  }
+  // if (!appLoading && loggedOut) {
+  //   if (localStorage.getItem("logOutClicked") === "true") {
+  //     return <Login login={redirect} />;
+  //   }
+  //   redirect();
+  // }
 
   // const [appLoading, setAppLoading] = useState(true);
   // const [user, setUser] = useState(null);

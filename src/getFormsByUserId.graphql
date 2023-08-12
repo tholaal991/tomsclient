@@ -77,5 +77,60 @@ query Shiftplans {
   shiftplans {
     id
     valid
+    description
+  }
+}
+
+query FindtShiftsForShiftPlanID($shiftPlanId: Int!) {
+  findtShiftsForShiftPlanID(shiftPlanID: $shiftPlanId) {
+    id
+    shift_description
+    shift_end
+    shift_name
+    start_time
+    start_date
+  }
+}
+
+query GetShiftUsers($shiftId: Int!) {
+  getShiftUsers(shiftId: $shiftId) {
+    rcn
+    name
+  }
+}
+
+mutation Mutation($shiftId: Int!, $newInchargeRcns: [Int!]!) {
+  updateInchargesForShift(
+    shiftId: $shiftId
+    newInchargeRcns: $newInchargeRcns
+  ) {
+    id
+    shift_description
+
+    incharges {
+      rcn
+      name
+    }
+  }
+}
+
+query GetInchargesByShiftId($shiftId: Int!) {
+  getInchargesByShiftId(shiftId: $shiftId) {
+    rcn
+    name
+  }
+}
+
+mutation CreateIncharge($createInchargeInput: CreateInchargeInput!) {
+  createIncharge(createInchargeInput: $createInchargeInput) {
+    rcn
+  }
+}
+
+query GetAllIncharges {
+  getAllIncharges {
+    rcn
+    name
+    shiftId
   }
 }

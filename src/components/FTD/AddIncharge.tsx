@@ -1,221 +1,240 @@
-
-
-
-
-
-
-
 import { useEffect, useState } from "react";
-import { GetAllFormsDocument, GetAllFormsQuery, GetAllFormsQueryVariables } from "../../generated/graphql";
-import { useQuery } from "@apollo/client";
-import { ModalForm, PageContainer } from "@ant-design/pro-components";
+import {
+  FindtShiftsForShiftPlanIdDocument,
+  FindtShiftsForShiftPlanIdQuery,
+  FindtShiftsForShiftPlanIdQueryVariables,
+  GetAllFormsDocument,
+  GetAllFormsQuery,
+  GetAllFormsQueryVariables,
+  Shift,
+  ShiftplansDocument,
+  ShiftplansQuery,
+  ShiftplansQueryVariables,
+  User,
+} from "../../generated/graphql";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { PageContainer } from "@ant-design/pro-components";
 import GenericReport from "./Report/GenericReport";
-import { Button, Empty, Toast } from "antd-mobile";
+import { Card, Empty, Tabs, Toast } from "antd-mobile";
 import { Select } from "antd";
 import FTDModalForm from "../FTDModalForm";
-import {  Modal } from 'antd';
+import { Modal } from "antd";
 
-
-
-import React from 'react';
-import { Space, Table, Tag } from 'antd';
+import React from "react";
+import {
+  Space,
+  Button,
+  Table,
+  Tag,
+  Drawer,
+  DrawerProps,
+  RadioChangeEvent,
+} from "antd";
+import EditableTable from "./FTDManageShiftUsers";
 
 const { Column, ColumnGroup } = Table;
 
-interface DataType {
+interface ShiftType {
   key: React.Key;
-  firstName: string;
-  lastName: string;
-  age: number;
-  address: string;
-  tags: string[];
+  id: string;
+  shift_description: string;
+  shift_name: string;
+  shift_end: string;
+  start_time: string;
 }
 
-const data: DataType[] = [
+interface ShiftPlanType {
+  key: React.Key;
+  "Shift Plan ID": string;
+  Description: string;
+}
+
+const shiftdata: ShiftType[] = [
   {
-    key: '1',
-    firstName: 'John',
-    lastName: 'Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: ['nice', 'developer'],
+    key: "1",
+    id: "1",
+    shift_description: "Busdriver shift",
+    shift_name: "Busdriver shift Evening",
+    shift_end: "2021-09-01",
+    start_time: "2021-09-01",
   },
   {
-    key: '2',
-    firstName: 'Jim',
-    lastName: 'Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: ['loser'],
+    key: "2",
+    id: "2",
+    shift_description: "Busdriver shift",
+    shift_name: "Busdriver shift Evening",
+    shift_end: "2021-09-01",
+    start_time: "2021-09-01",
   },
   {
-    key: '3',
-    firstName: 'Joe',
-    lastName: 'Black',
-    age: 32,
-    address: 'Sydney No. 1 Lake Park',
-    tags: ['cool', 'teacher'],
+    key: "3",
+    id: "3",
+    shift_description: "Busdriver shift",
+    shift_name: "Busdriver shift Evening",
+    shift_end: "2021-09-01",
+    start_time: "2021-09-01",
   },
 ];
 
 const AddIcharge: React.FC = () => {
-
- const [visibleModalForm, setVisibleModalForm]= useState(false);
- const [open, setOpen] = useState(false);
- const [confirmLoading, setConfirmLoading] = useState(false);
- const [modalText, setModalText] = useState('Content of the modal');
-
-
- const showModal = () => {
-    setOpen(true);
-  };
-
-  const handleOk = () => {
-    setModalText('The modal will be closed after two seconds');
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
-  };
+  const [visibleModalForm, setVisibleModalForm] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [selectedShiftPlan, setSelectedShiftPlan] = useState(null);
+  const [shiftsData, setshiftsData] = useState<Shift[]>();
+  const [shiftUsers, setShiftUsers] = useState<User[]>();
+  const [shiftUsersToAdd, setShiftUsersToAdd] = useState<User[]>();
+  const [openDrawer, setOpenDrawer] = useState(false);
+  const [placement, setPlacement] = useState<DrawerProps["placement"]>("right");
 
   const handleCancel = () => {
-    console.log('Clicked cancel button');
+    console.log("Clicked cancel button");
     setOpen(false);
   };
 
+  const {
+    data: shiftPlanData,
+    loading: shiftPlanLoading,
+    error: shiftPlanError,
+    refetch: refetchShiftPlan,
+  } = useQuery<ShiftplansQuery, ShiftplansQueryVariables>(ShiftplansDocument, {
+    variables: {},
+  });
 
-    const  selectData = [
+  useEffect(() => {
+    refetchShiftPlan();
+  }, [refetchShiftPlan]);
 
-        {
-            value: '1',
-            label: 'Not Identified',
-        },
-        {
-            value: '2',
-            label: 'Closed',
-        },
-        {
-            value: '3',
-            label: 'Communicated',
-        },
-        {
-            value: '4',
-            label: 'Identified',
-        },
-        {
-            value: '5',
-            label: 'Resolved',
-        },
-        {
-            value: '6',
-            label: 'Cancelled',
-        },
-    ]
-    
+  if (shiftPlanLoading) {
+    Toast.show("loading");
+  }
+  if (shiftPlanError) {
+    Toast.show("Error fetching data");
+  }
 
+  const shiftPlans = shiftPlanData?.shiftplans;
 
+  const mappedShiftPlans = shiftPlans?.map((shiftPlan, key) => ({
+    key: key.toString(),
+    "Shift Plan ID": String(shiftPlan?.id),
+    Description: String(shiftPlan?.description),
+  }));
 
+  if (mappedShiftPlans !== undefined) {
+    const data: ShiftPlanType[] | undefined = mappedShiftPlans?.map(
+      (shiftPlan, key) => ({
+        key: key.toString(),
+        "Shift Plan ID": String(shiftPlan?.["Shift Plan ID"]),
+        Description: String(shiftPlan?.Description),
+      })
+    );
+  }
 
+  const selectData = mappedShiftPlans?.map((shiftPlan, key) => ({
+    value: shiftPlan?.["Shift Plan ID"],
+    label: shiftPlan?.Description,
+  }));
 
+  const showDrawer = () => {
+    setOpen(true);
+  };
 
+  const onChangeDrawer = (e: RadioChangeEvent) => {
+    setPlacement(e.target.value);
+  };
 
-    return (
+  const onCloseDrawer = () => {
+    setOpen(false);
+  };
 
-        <PageContainer title='Manage Shift'>
-  
+  const [getShifts, { loading, error, data }] = useLazyQuery<
+    FindtShiftsForShiftPlanIdQuery,
+    FindtShiftsForShiftPlanIdQueryVariables
+  >(FindtShiftsForShiftPlanIdDocument, {});
 
+  const handleDropDownBoxChange = async (value: any) => {
+    setSelectedShiftPlan(value);
+    console.log(`selected ${value}`);
 
+    const temp = await getShifts({
+      variables: {
+        shiftPlanId: parseInt(value),
+      },
+    }).then((res) => {
+      console.log(res.data?.findtShiftsForShiftPlanID);
+      setshiftsData(res.data?.findtShiftsForShiftPlanID ?? []);
+    });
 
+    // setshiftsData(temp)
+    // temp.data?.findtShiftsForShiftPlanID?.map((shift) => {
 
-      <Button onClick={showModal} >
-        Add Incharges
-       </Button>
-      <Modal
-        title="Title"
-        open={open}
-        onOk={handleOk}
-        confirmLoading={confirmLoading}
-        onCancel={handleCancel}
-      >
-        <p>{modalText}</p>
-      </Modal>
-     
-      <FTDModalForm visibleModalForm={visibleModalForm}  modalClose={()=> setVisibleModalForm(false)} />
+    //   console.log(shift?.id);
+    //   console.log(shift?.shift_description);
+    //   console.log(shift?.shift_name);
+    //   console.log(shift?.shift_end);
+    //   console.log(shift?.start_time);
+    // });
+  };
 
-        
-
-        <Button onClick={()=> setVisibleModalForm(true)}>Add Incharge</Button>
-
-<Select
+  return (
+    <PageContainer title="Manage Shift">
+      <Select
         showSearch
         style={{ width: 200 }}
         placeholder="Search to Select"
         optionFilterProp="children"
-        filterOption={(input, option) => (option?.label ?? '').includes(input)}
-        filterSort={(optionA, optionB) => (optionA?.label ?? '').toLowerCase().localeCompare((optionB?.label ?? '').toLowerCase())}
-        options={selectData} />
-        
-        
-        <Table dataSource={data}>
-            <Column title="Age" dataIndex="age" key="age" />
-            <Column title="Address" dataIndex="address" key="address" />
-            <Column
-                title="Tags"
-                dataIndex="tags"
-                key="tags"
-                render={(tags: string[]) => (
-                    <>
-                        {tags.map((tag) => (
-                            <Tag color="blue" key={tag}>
-                                {tag}
-                            </Tag>
-                        ))}
-                    </>
-                )} />
-            <Column
-                title="Action"
-                key="action"
-                render={(_: any, record: DataType) => (
-                        <Button size="small"> Delete </Button>
-                )} />
-        </Table>
+        filterOption={(input, option) => (option?.label ?? "").includes(input)}
+        filterSort={(optionA, optionB) =>
+          (optionA?.label ?? "")
+            .toLowerCase()
+            .localeCompare((optionB?.label ?? "").toLowerCase())
+        }
+        onSelect={(e) => handleDropDownBoxChange(e.toString())}
+        options={selectData}
+      />
 
-        </PageContainer>
+      <Table dataSource={shiftsData}>
+        <Column title="Shift ID" dataIndex="id" key="id" />
+        <Column title="Shift Name" dataIndex="shift_name" key="shift_name" />
+        <Column
+          title="Shift Description"
+          dataIndex="shift_description"
+          key="shift_description"
+        />
+        <Column title="Shift End" dataIndex="shift_end" key="shift_end" />
+        <Column title="Start Time" dataIndex="start_time" key="start_time" />
 
-    )
-    
+        <Column
+          title="Action"
+          key="action"
+          render={(_: any, record: ShiftType) => (
+            <Button size="small" onClick={showDrawer}>
+              {" "}
+              Manage{" "}
+            </Button>
+          )}
+        />
+      </Table>
+
+      <Drawer
+        title="Drawer with extra actions"
+        placement={"right"}
+        width={500}
+        onClose={onCloseDrawer}
+        open={open}
+        extra={
+          <Space>
+            <Button onClick={onCloseDrawer}>Cancel</Button>
+            <Button type="primary" onClick={onCloseDrawer}>
+              OK
+            </Button>
+          </Space>
+        }
+      >
+        <EditableTable />
+      </Drawer>
+    </PageContainer>
+  );
 };
 
-
-
-
 export default AddIcharge;
-
-
-
-
-
-  
-// //   const options: SelectProps['options'] = [];
-
-
-// // for (let i = 10; i < 36; i++) {
-// //   options.push({
-// //     value: i.toString(36) + i,
-// //     label: i.toString(36) + i,
-// //   });
-// // }
-    
-
-// // const handleChange = (value: string) => {
-// //   Toast.show(`selected ${value}`);
-// // };
-
-// // export const  AddIcharge = () => {
-// //     return (
-// //         <div>
-// //         <h1>hello</h1>
-// //         </div>
-// //     )
-// //     }

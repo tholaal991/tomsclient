@@ -6,7 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import { Provider } from "react-redux";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import { store } from "./Redux/store";
-import App from "./__Original_App";
+import App from "./__new__App";
 import en_US from "antd/lib/locale/en_US";
 import reportWebVitals from "./reportWebVitals";
 import { ConfigProvider } from "antd-mobile";

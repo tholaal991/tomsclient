@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const ME_QUERY = gql`
     query  {
-         getUserbyUID {
+        GetUserByUUID {
             rcn,
             name,   
          } 

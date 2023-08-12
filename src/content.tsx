@@ -22,28 +22,27 @@ import React from "react";
 
 export default function Contents() {
   return (
-    <></>
-    // <Routes>
-    //       <Route path="/" element={ <Dashboard/>}></Route>
-    //       <Route path="/dashboard" element={<Dashboard/>} ></Route>
-    //       <Route path="/applications" element={ <Applications/>} ></Route>
+    <Routes>
+      <Route path="/" element={<Dashboard />}></Route>
+      <Route path="/dashboard" element={<Dashboard />}></Route>
+      <Route path="/applications" element={<Applications />}></Route>
 
-    //       <Route path="/passed" element={<Passed />} ></Route>
-    //       <Route path="/practical" element={<Practical />} ></Route>
-    //       <Route path="/shortlist" element={<Shortlist />} ></Route>
+      <Route path="/passed" element={<Passed />}></Route>
+      <Route path="/practical" element={<Practical />}></Route>
+      <Route path="/shortlist" element={<Shortlist />}></Route>
 
-    //        <Route path="/submitftd" element={<FtdMobile/>}></Route>
-    //        <Route path="/device" element={<DeviceDetect/>}></Route>
-    //        <Route path="/approval" element={<Approval/>}></Route>
-    //        <Route path="/pro" element={<AntdFTDForm/>}></Route>
+      <Route path="/submitftd" element={<FtdMobile />}></Route>
+      <Route path="/device" element={<DeviceDetect />}></Route>
+      <Route path="/approval" element={<Approval />}></Route>
+      <Route path="/pro" element={<AntdFTDForm />}></Route>
 
-    //        <Route path="/ftdreport" element={<TESTGENERIC/>}></Route>
+      <Route path="/ftdreport" element={<TESTGENERIC />}></Route>
 
-    //        <Route path="/123" element={<PassedPage/>}></Route>
-    //        <Route path='/operator' element={<OperatorWindow/>}></Route>
-    //        <Route path='/testgeneric' element={<TESTGENERIC/>}></Route>
-    //        <Route path='/inchargeftd' element={<InchargeFtdFormMobile/>}></Route>
-    //        <Route path="/addincharge" element={<AddIcharge/>}></Route>
-    //    </Routes>
+      <Route path="/123" element={<PassedPage />}></Route>
+      <Route path="/operator" element={<OperatorWindow />}></Route>
+      <Route path="/testgeneric" element={<TESTGENERIC />}></Route>
+      <Route path="/inchargeftd" element={<InchargeFtdFormMobile />}></Route>
+      <Route path="/addincharge" element={<AddIcharge />}></Route>
+    </Routes>
   );
 }

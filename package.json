@@ -3,8 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ant-design/icons": "^5.1.4",
+    "@ant-design/icons": "^5.2.5",
     "@ant-design/pro-components": "^2.6.7",
+    "@ant-design/pro-table": "^3.10.5",
     "@apollo/client": "^3.7.17",
     "@graphql-codegen/typescript-react-apollo": "^3.3.7",
     "@reduxjs/toolkit": "^1.9.5",
@@ -15,6 +16,7 @@
     "@types/node": "^16.18.39",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "antd": "^5.8.2",
     "antd-mobile": "^5.32.0",
     "exceljs": "^4.3.0",
     "graphql-codegen": "^0.4.0",
